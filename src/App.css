@@ -1,38 +1,300 @@
+/* App.css - Styling for the Book to Speech React App */
+
+:root {
+  --primary-color: #4a90e2;
+  --secondary-color: #f5f7fa;
+  --text-color: #333;
+  --border-color: #ddd;
+  --success-color: #48bb78;
+  --error-color: #e53e3e;
+  --hover-color: #2b6cb0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: #f9f9f9;
+}
+
 .App {
-  text-align: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
+/* Header Section */
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.App-header h1 {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.App-header p {
+  font-size: 1.2rem;
+  color: #666;
+}
+
+/* Main Content */
+main {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  gap: 30px;
+}
+
+section {
+  background-color: white;
+  border-radius: 8px;
+  padding: 25px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: var(--primary-color);
+  border-bottom: 2px solid var(--secondary-color);
+  padding-bottom: 10px;
+}
+
+/* API Key Section */
+.api-key-section .input-group {
+  display: flex;
+  gap: 10px;
+}
+
+.api-key-section input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.success-message {
+  color: var(--success-color);
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+/* Text Input Section */
+.text-input-section textarea {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 200px;
+  margin-bottom: 15px;
+}
+
+.text-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.char-count {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.split-button {
+  display: block;
+  width: 100%;
+  padding: 12px 15px;
+  background-color: var(--primary-color);
   color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.App-link {
-  color: #61dafb;
+.split-button:hover {
+  background-color: var(--hover-color);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.split-button:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+/* Voice Options Section */
+.voice-options-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.voice-selector, .instructions-input {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.voice-selector label, .instructions-input label {
+  font-weight: 500;
+}
+
+.voice-selector select, .instructions-input input {
+  padding: 12px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+/* Error Message */
+.error-message {
+  background-color: #fed7d7;
+  color: var(--error-color);
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+/* Chunks Section */
+.chunks-section {
+  margin-bottom: 50px;
+}
+
+.info-text {
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.audio-player {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.chunks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.chunk-item {
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.chunk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--secondary-color);
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.chunk-header h3 {
+  color: var(--text-color);
+  font-size: 1.1rem;
+}
+
+.chunk-content {
+  padding: 15px;
+  background-color: white;
+  position: relative;
+}
+
+.chunk-content p {
+  white-space: pre-wrap;
+  margin-bottom: 30px;
+}
+
+.char-info {
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.generate-button {
+  padding: 8px 15px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 0.9rem;
+}
+
+.generate-button:hover {
+  background-color: var(--hover-color);
+}
+
+.generate-button:disabled {
+  background-color: #a0aec0;
+  cursor: wait;
+}
+
+/* Footer */
+footer {
+  margin-top: 50px;
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+  padding: 20px 0;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Buttons */
+button {
+  padding: 12px 20px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: var(--hover-color);
+}
+
+button:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .App {
+    padding: 15px;
   }
-  to {
-    transform: rotate(360deg);
+  
+  .api-key-section .input-group {
+    flex-direction: column;
+  }
+  
+  .chunk-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .generate-button {
+    width: 100%;
   }
 }
