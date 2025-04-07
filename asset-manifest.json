@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/aquietplace/static/css/main.0a438eb0.css",
+    "main.js": "/aquietplace/static/js/main.7062f556.js",
+    "index.html": "/aquietplace/index.html",
+    "main.0a438eb0.css.map": "/aquietplace/static/css/main.0a438eb0.css.map",
+    "main.7062f556.js.map": "/aquietplace/static/js/main.7062f556.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.0a438eb0.css",
+    "static/js/main.7062f556.js"
+  ]
+}
