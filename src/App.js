@@ -30,7 +30,14 @@ const SandboxSection = ({
   // Handle selecting an instruction from the guide
   const handleSelectInstruction = (instruction) => {
     setPreviewInstructions(instruction);
-    setShowInstructionsGuide(false); // Hide guide after selection
+    // Keep the guide open after selection
+  };
+
+  // Function to toggle guide visibility
+  const toggleGuide = (e) => {
+    // Prevent event propagation
+    e.stopPropagation();
+    setShowInstructionsGuide(!showInstructionsGuide);
   };
 
   return (
@@ -62,7 +69,7 @@ const SandboxSection = ({
             Reading Instructions:
             <button 
               className="guide-toggle-button" 
-              onClick={() => setShowInstructionsGuide(!showInstructionsGuide)}
+              onClick={toggleGuide}
               title="Show instructions guide"
             >
               {showInstructionsGuide ? 'Hide Guide' : 'Show Guide'}

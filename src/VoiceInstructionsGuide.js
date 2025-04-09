@@ -97,14 +97,20 @@ const VoiceInstructionsGuide = ({ onSelectInstruction }) => {
   ];
   
   // Handle instruction selection
-  const handleTryExample = (instruction) => {
+  const handleTryExample = (instruction, e) => {
+    // Stop event propagation to prevent parent click handlers from firing
+    e.stopPropagation();
+    
     if (onSelectInstruction) {
       onSelectInstruction(instruction);
     }
   };
   
-  // Toggle category expand/collapse
-  const toggleCategory = (categoryId) => {
+  // Toggle category expand/collapse with a dedicated handler
+  const toggleCategory = (categoryId, e) => {
+    // Important: Stop the click from propagating to parent elements
+    e.stopPropagation();
+    
     if (selectedCategory === categoryId) {
       setSelectedCategory(null);
     } else {
@@ -113,7 +119,7 @@ const VoiceInstructionsGuide = ({ onSelectInstruction }) => {
   };
   
   return (
-    <div className="instructions-guide">
+    <div className="instructions-guide" onClick={(e) => e.stopPropagation()}>
       <div className="guide-header">
         <h3>Voice Instructions Guide</h3>
         <p>Discover how to craft the perfect narrative tone for your stories</p>
@@ -128,7 +134,7 @@ const VoiceInstructionsGuide = ({ onSelectInstruction }) => {
             <div 
               key={category.id} 
               className="instruction-category"
-              onClick={() => toggleCategory(category.id)}
+              onClick={(e) => toggleCategory(category.id, e)}
             >
               <div className="category-header">
                 <div className="category-icon">{category.icon}</div>
@@ -136,24 +142,19 @@ const VoiceInstructionsGuide = ({ onSelectInstruction }) => {
               </div>
               
               {selectedCategory === category.id && (
-                <>
-                  <ul className="examples-list">
-                    {category.examples.map((example, index) => (
-                      <li key={index}>
-                        <strong>{example.label}:</strong> {example.instruction}
-                        <button 
-                          className="try-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleTryExample(example.instruction);
-                          }}
-                        >
-                          Try this
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </>
+                <ul className="examples-list">
+                  {category.examples.map((example, index) => (
+                    <li key={index} onClick={(e) => e.stopPropagation()}>
+                      <strong>{example.label}:</strong> {example.instruction}
+                      <button 
+                        className="try-button"
+                        onClick={(e) => handleTryExample(example.instruction, e)}
+                      >
+                        Try this
+                      </button>
+                    </li>
+                  ))}
+                </ul>
               )}
             </div>
           ))}
@@ -171,7 +172,7 @@ const VoiceInstructionsGuide = ({ onSelectInstruction }) => {
         <h4>Try these combinations:</h4>
         <div className="instruction-categories">
           {combinationExamples.map(example => (
-            <div key={example.id} className="instruction-category">
+            <div key={example.id} className="instruction-category" onClick={(e) => e.stopPropagation()}>
               <div className="category-header">
                 <div className="category-icon">{example.icon}</div>
                 <div className="category-title">{example.title}</div>
@@ -179,7 +180,7 @@ const VoiceInstructionsGuide = ({ onSelectInstruction }) => {
               <p style={{ margin: '10px 0', color: '#c9c4a7' }}>{example.instruction}</p>
               <button 
                 className="try-button"
-                onClick={() => handleTryExample(example.instruction)}
+                onClick={(e) => handleTryExample(example.instruction, e)}
               >
                 Try this combination
               </button>
