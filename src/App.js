@@ -1,4 +1,5 @@
-// Updated imports for App.js
+// App.js
+
 import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import SimpleRichEditor from './SimpleRichEditor';
@@ -8,6 +9,138 @@ import VoiceInstructionsGuide from './VoiceInstructionsGuide';
 // Maximum character limit for OpenAI's text-to-speech API
 const MAX_CHARS = 4096;
 
+// ─── Extracted SandboxSection Component ──────────────────────────────
+// By moving SandboxSection out of App, we preserve its component identity across re-renders.
+const SandboxSection = ({
+  sampleText,
+  setSampleText,
+  previewVoice,
+  setPreviewVoice,
+  previewInstructions,
+  setPreviewInstructions,
+  isProcessing,
+  savedApiKey,
+  previewSampleText,
+  voices,
+  audioPreviewUrl,
+}) => {
+  // Local state for controlling the visibility of the instructions guide
+  const [showInstructionsGuide, setShowInstructionsGuide] = useState(false);
+
+  // Handle selecting an instruction from the guide
+  const handleSelectInstruction = (instruction) => {
+    setPreviewInstructions(instruction);
+    setShowInstructionsGuide(false); // Hide guide after selection
+  };
+
+  return (
+    <section className="sandbox-section">
+      <h2>Voice Sandbox</h2>
+      <p className="info-text">
+        Try different voices and instructions with sample text without using your API credits.
+        This helps you choose the perfect settings before processing your actual book.
+      </p>
+
+      <div className="sandbox-controls">
+        <div className="voice-selector">
+          <label htmlFor="preview-voice">Select Voice:</label>
+          <select
+            id="preview-voice"
+            value={previewVoice}
+            onChange={(e) => setPreviewVoice(e.target.value)}
+          >
+            {voices.map(voice => (
+              <option key={voice.id} value={voice.id}>
+                {voice.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="instructions-input">
+          <label htmlFor="preview-instructions">
+            Reading Instructions:
+            <button 
+              className="guide-toggle-button" 
+              onClick={() => setShowInstructionsGuide(!showInstructionsGuide)}
+              title="Show instructions guide"
+            >
+              {showInstructionsGuide ? 'Hide Guide' : 'Show Guide'}
+            </button>
+          </label>
+          <input
+            id="preview-instructions"
+            type="text"
+            placeholder="How should the text be read?"
+            value={previewInstructions}
+            onChange={(e) => setPreviewInstructions(e.target.value)}
+          />
+        </div>
+      </div>
+
+      {showInstructionsGuide && (
+        <VoiceInstructionsGuide onSelectInstruction={handleSelectInstruction} />
+      )}
+
+      <div className="sample-text-container">
+        <label htmlFor="sample-text">Sample Text:</label>
+        <textarea
+          id="sample-text"
+          value={sampleText}
+          onChange={(e) => setSampleText(e.target.value)}
+          rows={4}
+        ></textarea>
+        <div className="char-count">
+          Characters: {sampleText.length} / {MAX_CHARS} maximum per chunk
+        </div>
+      </div>
+
+      {audioPreviewUrl && (
+        <div className="audio-preview">
+          <h3>Audio Preview</h3>
+          <audio controls src={audioPreviewUrl} className="audio-player"></audio>
+        </div>
+      )}
+
+      <div className="button-group">
+        <button 
+          className="preview-button"
+          onClick={previewSampleText}
+          disabled={isProcessing || !sampleText.trim() || !savedApiKey}
+        >
+          {isProcessing ? 'Generating...' : 'Generate Preview'}
+        </button>
+        <button 
+          className="reset-button"
+          onClick={() =>
+            setSampleText(
+              "This is a sample text to try out different voices and instructions without using your API credits. You can experiment with different settings here before processing your actual book text."
+            )
+          }
+        >
+          Reset Sample Text
+        </button>
+      </div>
+
+      <div className="api-usage-info">
+        <h3>API Usage Information</h3>
+        <p>
+          OpenAI charges based on the number of characters processed. Each API call also counts toward your rate limits.
+          Using this sandbox will consume a small amount of your API credits with each preview.
+        </p>
+        <div className="usage-estimate">
+          <p>
+            Estimated cost for this preview: $
+            {((sampleText.length / 1000) * 0.015).toFixed(4)} USD
+          </p>
+          <p>Based on OpenAI's pricing of $0.015 per 1K characters</p>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// ─── Main App Component ─────────────────────────────────────────────────
 function App() {
   const [text, setText] = useState('');
   const [htmlText, setHtmlText] = useState(''); // For storing HTML content from editor
@@ -87,18 +220,13 @@ function App() {
     let currentChunk = '';
     
     paragraphs.forEach(paragraph => {
-      // If adding this paragraph would exceed the limit, start a new chunk
       if (currentChunk.length + paragraph.length + 2 > MAX_CHARS) {
         if (currentChunk) {
           newChunks.push(currentChunk);
         }
-        
-        // If a single paragraph is too long, split it further
         if (paragraph.length > MAX_CHARS) {
-          // Split by sentences
           const sentences = paragraph.split(/(?<=[.!?])\s+/);
           let sentenceChunk = '';
-          
           sentences.forEach(sentence => {
             if (sentenceChunk.length + sentence.length + 1 > MAX_CHARS) {
               if (sentenceChunk) {
@@ -109,7 +237,6 @@ function App() {
               sentenceChunk += (sentenceChunk ? ' ' : '') + sentence;
             }
           });
-          
           if (sentenceChunk) {
             currentChunk = sentenceChunk;
           } else {
@@ -119,12 +246,10 @@ function App() {
           currentChunk = paragraph;
         }
       } else {
-        // Add paragraph to current chunk
         currentChunk += (currentChunk ? '\n\n' : '') + paragraph;
       }
     });
     
-    // Add the last chunk if it's not empty
     if (currentChunk) {
       newChunks.push(currentChunk);
     }
@@ -139,11 +264,9 @@ function App() {
       setError('Please save your OpenAI API key first');
       return;
     }
-
     setIsProcessing(true);
     setCurrentChunk(index);
     setError('');
-
     try {
       const response = await fetch('https://api.openai.com/v1/audio/speech', {
         method: 'POST',
@@ -159,26 +282,20 @@ function App() {
           response_format: 'mp3'
         })
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error?.message || 'Failed to convert text to speech');
       }
-
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
-      
       if (audioRef.current) {
         audioRef.current.src = audioUrl;
         audioRef.current.play();
       }
-
-      // Create download link
       const downloadLink = document.createElement('a');
       downloadLink.href = audioUrl;
       downloadLink.download = `chunk_${index + 1}.mp3`;
       downloadLink.click();
-
     } catch (err) {
       setError(err.message || 'Error converting text to speech');
     } finally {
@@ -193,15 +310,12 @@ function App() {
       setError('Please save your OpenAI API key first');
       return;
     }
-
     if (!sampleText.trim()) {
       setError('Please enter some text to preview');
       return;
     }
-
     setIsProcessing(true);
     setError('');
-
     try {
       const response = await fetch('https://api.openai.com/v1/audio/speech', {
         method: 'POST',
@@ -217,135 +331,19 @@ function App() {
           response_format: 'mp3'
         })
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error?.message || 'Failed to generate preview');
       }
-
       const audioBlob = await response.blob();
       const url = URL.createObjectURL(audioBlob);
       setAudioPreviewUrl(url);
-
     } catch (err) {
       setError(err.message || 'Error generating audio preview');
     } finally {
       setIsProcessing(false);
     }
   };
-  
-// Updated SandboxSection with Instructions Guide Integration
-const SandboxSection = () => {
-  // State to control the visibility of the instructions guide
-  const [showInstructionsGuide, setShowInstructionsGuide] = useState(false);
-  
-  // Handle selecting an instruction from the guide
-  const handleSelectInstruction = (instruction) => {
-    setPreviewInstructions(instruction);
-    setShowInstructionsGuide(false); // Hide guide after selection
-  };
-  
-  return (
-    <section className="sandbox-section">
-      <h2>Voice Sandbox</h2>
-      <p className="info-text">
-        Try different voices and instructions with sample text without using your API credits.
-        This helps you choose the perfect settings before processing your actual book.
-      </p>
-
-      <div className="sandbox-controls">
-        <div className="voice-selector">
-          <label htmlFor="preview-voice">Select Voice:</label>
-          <select
-            id="preview-voice"
-            value={previewVoice}
-            onChange={(e) => setPreviewVoice(e.target.value)}
-          >
-            {voices.map(voice => (
-              <option key={voice.id} value={voice.id}>
-                {voice.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="instructions-input">
-          <label htmlFor="preview-instructions">
-            Reading Instructions:
-            <button 
-              className="guide-toggle-button" 
-              onClick={() => setShowInstructionsGuide(!showInstructionsGuide)}
-              title="Show instructions guide"
-            >
-              {showInstructionsGuide ? 'Hide Guide' : 'Show Guide'}
-            </button>
-          </label>
-          <input
-            id="preview-instructions"
-            type="text"
-            placeholder="How should the text be read?"
-            // Fix for input issue - using defaultValue instead of value
-            defaultValue={previewInstructions}
-            onBlur={(e) => setPreviewInstructions(e.target.value)}
-          />
-        </div>
-      </div>
-      
-      {/* Instructions Guide (conditionally rendered) */}
-      {showInstructionsGuide && (
-        <VoiceInstructionsGuide onSelectInstruction={handleSelectInstruction} />
-      )}
-
-      <div className="sample-text-container">
-        <label htmlFor="sample-text">Sample Text:</label>
-        <textarea
-          id="sample-text"
-          value={sampleText}
-          onChange={(e) => setSampleText(e.target.value)}
-          rows={4}
-        ></textarea>
-        <div className="char-count">
-          Characters: {sampleText.length} / {MAX_CHARS} maximum per chunk
-        </div>
-      </div>
-
-      {audioPreviewUrl && (
-        <div className="audio-preview">
-          <h3>Audio Preview</h3>
-          <audio controls src={audioPreviewUrl} className="audio-player"></audio>
-        </div>
-      )}
-
-      <div className="button-group">
-        <button 
-          className="preview-button"
-          onClick={previewSampleText}
-          disabled={isProcessing || !sampleText.trim() || !savedApiKey}
-        >
-          {isProcessing ? 'Generating...' : 'Generate Preview'}
-        </button>
-        <button 
-          className="reset-button"
-          onClick={() => setSampleText("This is a sample text to try out different voices and instructions without using your API credits. You can experiment with different settings here before processing your actual book text.")}
-        >
-          Reset Sample Text
-        </button>
-      </div>
-
-      <div className="api-usage-info">
-        <h3>API Usage Information</h3>
-        <p>
-          OpenAI charges based on the number of characters processed. Each API call also counts toward your rate limits.
-          Using this sandbox will consume a small amount of your API credits with each preview.
-        </p>
-        <div className="usage-estimate">
-          <p>Estimated cost for this preview: ${((sampleText.length / 1000) * 0.015).toFixed(4)} USD</p>
-          <p>Based on OpenAI's pricing of $0.015 per 1K characters</p>
-        </div>
-      </div>
-    </section>
-  );
-};
 
   return (
     <div className="App">
@@ -353,8 +351,6 @@ const SandboxSection = () => {
       <header className="App-header">
         <h1>Book to Speech Converter</h1>
         <p>Convert your book text into spoken audio using OpenAI's text-to-speech service</p>
-        
-        {/* Mode toggle buttons */}
         <div className="mode-toggle">
           <button
             className={`mode-button ${!sandboxMode ? 'active' : ''}`}
@@ -389,9 +385,20 @@ const SandboxSection = () => {
 
         {error && <div className="error-message">{error}</div>}
 
-        {/* Conditional rendering based on selected mode */}
         {sandboxMode ? (
-          <SandboxSection />
+          <SandboxSection
+            sampleText={sampleText}
+            setSampleText={setSampleText}
+            previewVoice={previewVoice}
+            setPreviewVoice={setPreviewVoice}
+            previewInstructions={previewInstructions}
+            setPreviewInstructions={setPreviewInstructions}
+            isProcessing={isProcessing}
+            savedApiKey={savedApiKey}
+            previewSampleText={previewSampleText}
+            voices={voices}
+            audioPreviewUrl={audioPreviewUrl}
+          />
         ) : (
           <>
             <section className="text-input-section">
@@ -401,14 +408,11 @@ const SandboxSection = () => {
                   Characters: {text.length} / {MAX_CHARS} maximum per chunk
                 </div>
               </div>
-              
-              {/* Use the simple rich editor instead of textarea */}
               <SimpleRichEditor 
                 onChange={handleEditorChange}
                 placeholder="Paste or type your book text here..."
                 maxChars={MAX_CHARS}
               />
-              
               <button 
                 className="split-button" 
                 onClick={splitIntoChunks}
@@ -455,9 +459,7 @@ const SandboxSection = () => {
                   Your text has been split into {chunks.length} chunks. 
                   Click "Generate Audio" for each chunk to convert it to speech.
                 </p>
-                
                 <audio ref={audioRef} controls className="audio-player"></audio>
-
                 <div className="chunks-list">
                   {chunks.map((chunk, index) => (
                     <div key={index} className="chunk-item">
