@@ -249,13 +249,13 @@ h2::after {
   background: linear-gradient(to right, var(--accent-color), transparent);
 }
 
-/* API Key Section */
-.api-key-section .input-group {
+/* API Key Section - renamed to Setup Section */
+.setup-section .input-group {
   display: flex;
   gap: 15px;
 }
 
-.api-key-section input {
+.setup-section input {
   flex: 1;
   padding: 14px 18px;
   background-color: rgba(44, 41, 21, 0.8);
@@ -267,7 +267,7 @@ h2::after {
   font-family: 'Bitter', Georgia, serif;
 }
 
-.api-key-section input:focus {
+.setup-section input:focus {
   outline: none;
   border-color: var(--accent-color);
   box-shadow: 0 0 0 2px rgba(204, 156, 58, 0.3);
@@ -398,8 +398,8 @@ h2::after {
   color: var(--text-color) !important;
 }
 
-/* Split Button */
-.split-button {
+/* Split Button - now called Process Button */
+.process-button {
   display: block;
   width: 100%;
   padding: 15px;
@@ -417,20 +417,20 @@ h2::after {
   font-family: 'Bitter', Georgia, serif;
 }
 
-.split-button:hover {
+.process-button:hover {
   background-color: var(--hover-color);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   transform: translateY(-2px);
 }
 
-.split-button:disabled {
+.process-button:disabled {
   background-color: #5a5535;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
-.split-button::after {
+.process-button::after {
   content: '';
   position: absolute;
   top: -50%;
@@ -443,7 +443,7 @@ h2::after {
   opacity: 0;
 }
 
-.split-button:hover::after {
+.process-button:hover::after {
   opacity: 1;
   transform: rotate(45deg) translate(100%, 100%);
 }
@@ -504,8 +504,8 @@ h2::after {
   box-shadow: 0 0 0 2px rgba(204, 156, 58, 0.3);
 }
 
-/* Chunks Section */
-.chunks-section {
+/* Sections Section (formerly Chunks Section) */
+.sections-section {
   margin-bottom: 50px;
 }
 
@@ -532,13 +532,13 @@ audio::-webkit-media-controls-time-remaining-display {
   color: var(--text-color);
 }
 
-.chunks-list {
+.sections-list {
   display: flex;
   flex-direction: column;
   gap: 25px;
 }
 
-.chunk-item {
+.section-item {
   border: 1px solid var(--border-color);
   border-radius: 8px;
   overflow: hidden;
@@ -546,12 +546,12 @@ audio::-webkit-media-controls-time-remaining-display {
   transition: all 0.3s ease;
 }
 
-.chunk-item:hover {
+.section-item:hover {
   box-shadow: 0 0 20px rgba(204, 156, 58, 0.15);
   transform: translateY(-2px);
 }
 
-.chunk-header {
+.section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -560,20 +560,20 @@ audio::-webkit-media-controls-time-remaining-display {
   border-bottom: 1px solid var(--border-color);
 }
 
-.chunk-header h3 {
+.section-header h3 {
   color: var(--accent-color);
   font-size: 1.2rem;
   font-weight: 500;
 }
 
-.chunk-content {
+.section-content {
   padding: 18px;
   background-color: rgba(44, 41, 21, 0.75);
   position: relative;
   min-height: 120px;
 }
 
-.chunk-content p {
+.section-content p {
   white-space: pre-wrap;
   margin-bottom: 30px;
   line-height: 1.7;
@@ -588,7 +588,7 @@ audio::-webkit-media-controls-time-remaining-display {
   color: #a5a083;
 }
 
-.generate-button {
+.listen-button {
   padding: 10px 18px;
   background-color: var(--primary-color);
   color: var(--text-color);
@@ -602,42 +602,69 @@ audio::-webkit-media-controls-time-remaining-display {
   font-family: 'Bitter', Georgia, serif;
 }
 
-.generate-button:hover {
+.listen-button:hover {
   background-color: var(--hover-color);
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
-.generate-button:disabled {
+.listen-button:disabled {
   background-color: #5a5535;
   cursor: wait;
   transform: none;
   box-shadow: none;
 }
 
-/* Sandbox Section */
-.sandbox-section {
+/* CreativeCorner Section (formerly Sandbox Section) */
+.creative-corner {
   min-height: 500px;
+  background-color: rgba(58, 56, 28, 0.85);
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-.sandbox-controls {
+.voice-controls {
   display: flex;
   gap: 30px;
   margin-bottom: 30px;
+  flex-wrap: wrap;
 }
 
-.sample-text-container {
-  margin-bottom: 30px;
+@media (max-width: 768px) {
+  .voice-controls {
+    flex-direction: column;
+    gap: 20px;
+  }
 }
 
-.sample-text-container label {
-  display: block;
-  margin-bottom: 10px;
-  color: #c9c4a7;
-  font-weight: 500;
+/* Expanded text area for voice instructions */
+.voice-instructions-textarea {
+  width: 100%;
+  padding: 12px 15px;
+  background-color: rgba(44, 41, 21, 0.8);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 1rem;
+  color: var(--text-color);
+  resize: vertical;
+  min-height: 80px;
+  font-family: 'Bitter', Georgia, serif;
+  transition: all 0.3s ease;
 }
 
-.sample-text-container textarea {
+.voice-instructions-textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(204, 156, 58, 0.3);
+}
+
+/* Story text area with improved styling */
+.story-textarea {
   width: 100%;
   padding: 18px;
   background-color: rgba(44, 41, 21, 0.75);
@@ -645,16 +672,50 @@ audio::-webkit-media-controls-time-remaining-display {
   border-radius: 6px;
   font-size: 1.05rem;
   resize: vertical;
-  min-height: 150px;
+  min-height: 250px;
   color: var(--text-color);
   line-height: 1.7;
   font-family: 'Bitter', Georgia, serif;
+  transition: all 0.3s ease;
 }
 
-.sample-text-container textarea:focus {
+.story-textarea:focus {
   outline: none;
   border-color: var(--accent-color);
   box-shadow: 0 0 0 2px rgba(204, 156, 58, 0.3);
+}
+
+.story-text-container {
+  margin-bottom: 30px;
+}
+
+.story-text-container label {
+  display: block;
+  margin-bottom: 10px;
+  color: #c9c4a7;
+  font-weight: 500;
+}
+
+/* Hide the character counts but keep the container */
+.char-hint {
+  color: #a5a083;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.audio-preview {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: rgba(44, 41, 21, 0.75);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.audio-preview h3 {
+  margin-bottom: 15px;
+  color: var(--accent-color);
+  font-weight: 500;
 }
 
 .button-group {
@@ -666,11 +727,11 @@ audio::-webkit-media-controls-time-remaining-display {
 .preview-button {
   background-color: var(--primary-color);
   color: var(--text-color);
-  padding: 12px 25px;
+  padding: 15px 25px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.1rem;
   transition: all 0.3s ease;
   flex: 1;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -702,52 +763,34 @@ audio::-webkit-media-controls-time-remaining-display {
   color: var(--text-color);
 }
 
-.audio-preview {
-  margin-bottom: 30px;
-  padding: 20px;
-  background-color: rgba(44, 41, 21, 0.75);
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-}
-
-.audio-preview h3 {
-  margin-bottom: 15px;
-  color: var(--accent-color);
-  font-weight: 500;
-}
-
-.api-usage-info {
+/* New inspiration box styling */
+.inspiration-box {
   background-color: rgba(44, 41, 21, 0.75);
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 20px;
   margin-top: 30px;
+  position: relative;
+  overflow: hidden;
 }
 
-.api-usage-info h3 {
-  margin-bottom: 15px;
+.inspiration-box h3 {
   color: var(--accent-color);
-  font-weight: 500;
+  margin-bottom: 15px;
+  font-weight: 400;
+  position: relative;
+  display: inline-block;
 }
 
-.api-usage-info p {
-  margin-bottom: 15px;
+.inspiration-box h3::after {
+  content: "✨";
+  margin-left: 10px;
+  font-size: 0.9em;
+}
+
+.inspiration-box p {
   color: #c9c4a7;
   line-height: 1.7;
-}
-
-.usage-estimate {
-  margin-top: 15px;
-  padding: 15px;
-  background-color: rgba(58, 56, 28, 0.8);
-  border-radius: 6px;
-  font-size: 0.95rem;
-  color: #a5a083;
-}
-
-.usage-estimate p:first-child {
-  color: var(--text-color);
-  font-weight: 500;
 }
 
 /* Footer */
@@ -1061,22 +1104,42 @@ footer {
 }
 
 .try-button {
-  margin-top: 15px;
+  margin-top: 5px;
+  margin-left: 10px;
   background-color: rgba(94, 140, 49, 0.2);
   color: #c9c4a7;
   border: 1px solid rgba(94, 140, 49, 0.3);
   border-radius: 4px;
-  padding: 6px 10px;
+  padding: 3px 8px;
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.2s ease;
   display: inline-block;
   font-family: 'Bitter', Georgia, serif;
+  position: relative;
+  overflow: hidden;
 }
 
 .try-button:hover {
   background-color: var(--primary-color);
   color: var(--text-color);
+}
+
+.try-button::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: -100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  animation: shine 2s infinite;
+}
+
+@keyframes shine {
+  to {
+    left: 100%;
+  }
 }
 
 .guide-tips {
@@ -1100,6 +1163,25 @@ footer {
 .guide-tips h4::before {
   content: '💡';
   font-size: 1rem;
+}
+
+.guide-tips::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  right: 20px;
+  top: 20px;
+  background-color: #cc9c3a;
+  border-radius: 50%;
+  box-shadow: 0 0 8px 2px rgba(204, 156, 58, 0.8);
+  animation: firefly-pulse 3s ease-in-out infinite;
+}
+
+@keyframes firefly-pulse {
+  0% { opacity: 0.2; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.2; }
 }
 
 .tips-list {
@@ -1158,8 +1240,37 @@ body {
   }
 }
 
-/* Add leaf decorations to the sandbox section */
-.sandbox-section::before {
+/* Loading indicator for audio processing */
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  color: var(--accent-color);
+  font-style: italic;
+}
+
+.loading-indicator::before {
+  content: "🔊";
+  margin-right: 10px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0.5; transform: scale(0.95); }
+}
+
+/* Improve focus on writing by dimming UI when typing */
+.story-textarea:focus ~ .char-hint,
+.editor-content:focus ~ .editor-footer {
+  opacity: 0.5;
+  transition: opacity 0.5s ease;
+}
+
+/* Add leaf decorations to the creative corner section */
+.creative-corner::before {
   content: '🍂';
   position: absolute;
   top: 10px;
@@ -1169,7 +1280,7 @@ body {
   animation: float 5s ease-in-out infinite;
 }
 
-.sandbox-section::after {
+.creative-corner::after {
   content: '🍃';
   position: absolute;
   bottom: 10px;
@@ -1200,76 +1311,23 @@ body {
   100% { transform: rotate(360deg); }
 }
 
-/* Add a little firefly to the tips section */
-.guide-tips::after {
-  content: '';
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  right: 20px;
-  top: 20px;
-  background-color: #cc9c3a;
-  border-radius: 50%;
-  box-shadow: 0 0 8px 2px rgba(204, 156, 58, 0.8);
-  animation: firefly-pulse 3s ease-in-out infinite;
-}
-
-@keyframes firefly-pulse {
-  0% { opacity: 0.2; }
-  50% { opacity: 0.8; }
-  100% { opacity: 0.2; }
-}
-
-/* Make the Try button more prominent */
-.try-button {
-  margin-top: 5px;
-  margin-left: 10px;
-  display: inline-block;
-  padding: 3px 8px;
-  font-size: 0.75rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.try-button::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: -100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  animation: shine 2s infinite;
-}
-
-@keyframes shine {
-  to {
-    left: 100%;
-  }
-}
-
 /* Media Queries */
 @media (max-width: 768px) {
   .App {
     padding: 15px;
   }
   
-  .api-key-section .input-group {
+  .input-group {
     flex-direction: column;
   }
   
-  .chunk-header {
+  .section-header {
     flex-direction: column;
     gap: 10px;
   }
   
-  .generate-button {
+  .listen-button {
     width: 100%;
-  }
-  
-  .sandbox-controls {
-    flex-direction: column;
-    gap: 20px;
   }
   
   .button-group {

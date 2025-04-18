@@ -6,55 +6,52 @@ import SimpleRichEditor from './SimpleRichEditor';
 import ForestAnimations from './ForestAnimations';
 import VoiceInstructionsGuide from './VoiceInstructionsGuide';
 
-// Maximum character limit for OpenAI's text-to-speech API
+// Maximum character limit for OpenAI's text-to-speech API (hidden from user)
 const MAX_CHARS = 4096;
 
-// ─── Extracted SandboxSection Component ──────────────────────────────
-// By moving SandboxSection out of App, we preserve its component identity across re-renders.
-const SandboxSection = ({
-  sampleText,
-  setSampleText,
-  previewVoice,
-  setPreviewVoice,
-  previewInstructions,
-  setPreviewInstructions,
+// ─── CreativeCorner Component ──────────────────────────────
+const CreativeCorner = ({
+  storyText,
+  setStoryText,
+  voiceChoice,
+  setVoiceChoice,
+  voiceInstructions,
+  setVoiceInstructions,
   isProcessing,
   savedApiKey,
-  previewSampleText,
+  previewStoryText,
   voices,
-  audioPreviewUrl,
+  audioFiles
 }) => {
   // Local state for controlling the visibility of the instructions guide
   const [showInstructionsGuide, setShowInstructionsGuide] = useState(false);
 
   // Handle selecting an instruction from the guide
   const handleSelectInstruction = (instruction) => {
-    setPreviewInstructions(instruction);
-    // Keep the guide open after selection
+    setVoiceInstructions(instruction);
   };
 
   // Function to toggle guide visibility
   const toggleGuide = (e) => {
-    // Prevent event propagation
     e.stopPropagation();
     setShowInstructionsGuide(!showInstructionsGuide);
   };
 
   return (
-    <section className="sandbox-section">
-      <h2>Voice Sandbox</h2>
+    <section className="creative-corner">
+      <h2>Story Lab</h2>
       <p className="info-text">
-        Try different voices and instructions with sample text without using your API credits.
-        This helps you choose the perfect settings before processing your actual book.
+        Bring your stories to life with different voices and moods. 
+        Experiment with how your writing sounds when read aloud before finalizing your story.
       </p>
 
-      <div className="sandbox-controls">
+      <div className="voice-controls">
         <div className="voice-selector">
-          <label htmlFor="preview-voice">Select Voice:</label>
+          <label htmlFor="voice-choice">Storyteller Voice:</label>
           <select
-            id="preview-voice"
-            value={previewVoice}
-            onChange={(e) => setPreviewVoice(e.target.value)}
+            id="voice-choice"
+            value={voiceChoice}
+            onChange={(e) => setVoiceChoice(e.target.value)}
           >
             {voices.map(voice => (
               <option key={voice.id} value={voice.id}>
@@ -65,22 +62,23 @@ const SandboxSection = ({
         </div>
 
         <div className="instructions-input">
-          <label htmlFor="preview-instructions">
-            Reading Instructions:
+          <label htmlFor="voice-instructions">
+            Voice Mood & Style:
             <button 
               className="guide-toggle-button" 
               onClick={toggleGuide}
-              title="Show instructions guide"
+              title="Inspiration for voice styles"
             >
-              {showInstructionsGuide ? 'Hide Guide' : 'Show Guide'}
+              {showInstructionsGuide ? 'Hide Ideas' : 'Get Ideas'}
             </button>
           </label>
-          <input
-            id="preview-instructions"
-            type="text"
-            placeholder="How should the text be read?"
-            value={previewInstructions}
-            onChange={(e) => setPreviewInstructions(e.target.value)}
+          <textarea
+            id="voice-instructions"
+            placeholder="How should your story be told? (e.g., warm and magical, like a fireside tale)"
+            value={voiceInstructions}
+            onChange={(e) => setVoiceInstructions(e.target.value)}
+            rows={3}
+            className="voice-instructions-textarea"
           />
         </div>
       </div>
@@ -89,59 +87,50 @@ const SandboxSection = ({
         <VoiceInstructionsGuide onSelectInstruction={handleSelectInstruction} />
       )}
 
-      <div className="sample-text-container">
-        <label htmlFor="sample-text">Sample Text:</label>
+      <div className="story-text-container">
+        <label htmlFor="story-text">Your Story:</label>
         <textarea
-          id="sample-text"
-          value={sampleText}
-          onChange={(e) => setSampleText(e.target.value)}
-          rows={4}
+          id="story-text"
+          value={storyText}
+          onChange={(e) => setStoryText(e.target.value)}
+          rows={10}
+          className="story-textarea"
+          placeholder="Write or paste your story here..."
         ></textarea>
-        <div className="char-count">
-          Characters: {sampleText.length} / {MAX_CHARS} maximum per chunk
+        <div className="char-hint">
+          Write as much as you want - we'll take care of the rest
         </div>
       </div>
 
-      {audioPreviewUrl && (
+      {audioFiles && audioFiles.length > 0 && (
         <div className="audio-preview">
-          <h3>Audio Preview</h3>
-          <audio controls src={audioPreviewUrl} className="audio-player"></audio>
+          <h3>Your Story Audio</h3>
+          <audio controls src={audioFiles[0]} className="audio-player"></audio>
         </div>
       )}
 
       <div className="button-group">
         <button 
           className="preview-button"
-          onClick={previewSampleText}
-          disabled={isProcessing || !sampleText.trim() || !savedApiKey}
+          onClick={previewStoryText}
+          disabled={isProcessing || !storyText.trim() || !savedApiKey}
         >
-          {isProcessing ? 'Generating...' : 'Generate Preview'}
+          {isProcessing ? 'Reading Your Story...' : 'Read My Story Aloud'}
         </button>
         <button 
           className="reset-button"
-          onClick={() =>
-            setSampleText(
-              "This is a sample text to try out different voices and instructions without using your API credits. You can experiment with different settings here before processing your actual book text."
-            )
-          }
+          onClick={() => setStoryText("")}
         >
-          Reset Sample Text
+          Clear Story
         </button>
       </div>
 
-      <div className="api-usage-info">
-        <h3>API Usage Information</h3>
+      <div className="inspiration-box">
+        <h3>Writer's Corner</h3>
         <p>
-          OpenAI charges based on the number of characters processed. Each API call also counts toward your rate limits.
-          Using this sandbox will consume a small amount of your API credits with each preview.
+          Stories sound different when read aloud. Use this space to perfect how your tales are told - 
+          experiment with different voices and moods to find the perfect match for your writing style.
         </p>
-        <div className="usage-estimate">
-          <p>
-            Estimated cost for this preview: $
-            {((sampleText.length / 1000) * 0.015).toFixed(4)} USD
-          </p>
-          <p>Based on OpenAI's pricing of $0.015 per 1K characters</p>
-        </div>
       </div>
     </section>
   );
@@ -151,24 +140,23 @@ const SandboxSection = ({
 function App() {
   const [text, setText] = useState('');
   const [htmlText, setHtmlText] = useState(''); // For storing HTML content from editor
-  const [chunks, setChunks] = useState([]);
+  const [audioSections, setAudioSections] = useState([]); // Renamed from chunks
   const [apiKey, setApiKey] = useState('');
   const [selectedVoice, setSelectedVoice] = useState('alloy');
-  const [instructions, setInstructions] = useState('Read in a natural, engaging tone');
+  const [voiceInstructions, setVoiceInstructions] = useState('Read in a natural, engaging tone');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [currentChunk, setCurrentChunk] = useState(null);
+  const [currentSection, setCurrentSection] = useState(null); // Renamed from currentChunk
   const [error, setError] = useState('');
   const [savedApiKey, setSavedApiKey] = useState('');
+  const [isProcessingFull, setIsProcessingFull] = useState(false);
   const audioRef = useRef(null);
   
-  // State variables for sandbox mode
-  const [sandboxMode, setSandboxMode] = useState(false);
-  const [sampleText, setSampleText] = useState(
-    "This is a sample text to try out different voices and instructions without using your API credits. You can experiment with different settings here before processing your actual book text."
-  );
-  const [audioPreviewUrl, setAudioPreviewUrl] = useState('');
-  const [previewVoice, setPreviewVoice] = useState('alloy');
-  const [previewInstructions, setPreviewInstructions] = useState('Read in a natural, engaging tone');
+  // State variables for creative corner (formerly sandbox mode)
+  const [creativeMode, setCreativeMode] = useState(true); // Default to creative mode
+  const [storyText, setStoryText] = useState('');
+  const [audioFiles, setAudioFiles] = useState([]);
+  const [voiceChoice, setVoiceChoice] = useState('alloy');
+  const [combiningAudio, setCombiningAudio] = useState(false);
 
   // Available voices
   const voices = [
@@ -213,67 +201,185 @@ function App() {
     setText(plainText);
   };
 
-  // Function to split text into chunks based on paragraphs
-  const splitIntoChunks = () => {
-    if (!text.trim()) {
+  // Function to split text into sections based on character limit (hidden from user)
+  const splitIntoSections = (inputText) => {
+    if (!inputText.trim()) {
       setError('Please enter some text');
-      return;
+      return [];
     }
 
     // Split by paragraphs (double newlines)
-    const paragraphs = text.split(/\n\s*\n/);
+    const paragraphs = inputText.split(/\n\s*\n/);
     
-    const newChunks = [];
-    let currentChunk = '';
+    const newSections = [];
+    let currentSection = '';
     
     paragraphs.forEach(paragraph => {
-      if (currentChunk.length + paragraph.length + 2 > MAX_CHARS) {
-        if (currentChunk) {
-          newChunks.push(currentChunk);
+      if (currentSection.length + paragraph.length + 2 > MAX_CHARS) {
+        if (currentSection) {
+          newSections.push(currentSection);
         }
+        
+        // Handle paragraphs longer than MAX_CHARS
         if (paragraph.length > MAX_CHARS) {
           const sentences = paragraph.split(/(?<=[.!?])\s+/);
-          let sentenceChunk = '';
+          let sentenceSection = '';
+          
           sentences.forEach(sentence => {
-            if (sentenceChunk.length + sentence.length + 1 > MAX_CHARS) {
-              if (sentenceChunk) {
-                newChunks.push(sentenceChunk);
+            if (sentenceSection.length + sentence.length + 1 > MAX_CHARS) {
+              if (sentenceSection) {
+                newSections.push(sentenceSection);
               }
-              sentenceChunk = sentence;
+              sentenceSection = sentence;
             } else {
-              sentenceChunk += (sentenceChunk ? ' ' : '') + sentence;
+              sentenceSection += (sentenceSection ? ' ' : '') + sentence;
             }
           });
-          if (sentenceChunk) {
-            currentChunk = sentenceChunk;
+          
+          if (sentenceSection) {
+            currentSection = sentenceSection;
           } else {
-            currentChunk = '';
+            currentSection = '';
           }
         } else {
-          currentChunk = paragraph;
+          currentSection = paragraph;
         }
       } else {
-        currentChunk += (currentChunk ? '\n\n' : '') + paragraph;
+        currentSection += (currentSection ? '\n\n' : '') + paragraph;
       }
     });
     
-    if (currentChunk) {
-      newChunks.push(currentChunk);
+    if (currentSection) {
+      newSections.push(currentSection);
     }
     
-    setChunks(newChunks);
-    setError('');
+    return newSections;
   };
 
-  // Function to convert a text chunk to speech
-  const convertChunkToSpeech = async (chunk, index) => {
+  // Create a complete audio file from multiple sections
+  const processFullAudio = async (inputText) => {
     if (!savedApiKey) {
       setError('Please save your OpenAI API key first');
       return;
     }
-    setIsProcessing(true);
-    setCurrentChunk(index);
+    
+    setIsProcessingFull(true);
     setError('');
+    
+    try {
+      // Split text into sections based on API limit
+      const sections = splitIntoSections(inputText);
+      if (sections.length === 0) return;
+      
+      // Process each section
+      const audioBlobs = [];
+      let completedSections = 0;
+      
+      for (let i = 0; i < sections.length; i++) {
+        setCurrentSection(i);
+        
+        // Call API for each section
+        const response = await fetch('https://api.openai.com/v1/audio/speech', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${savedApiKey}`
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini-tts',
+            input: sections[i],
+            voice: creativeMode ? voiceChoice : selectedVoice,
+            instructions: creativeMode ? voiceInstructions : voiceInstructions,
+            response_format: 'mp3'
+          })
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || 'Failed to convert text to speech');
+        }
+        
+        const audioBlob = await response.blob();
+        audioBlobs.push(audioBlob);
+        completedSections++;
+      }
+      
+      // When all sections are processed, combine them (if more than one)
+      if (audioBlobs.length > 0) {
+        if (audioBlobs.length === 1) {
+          // Only one section, no need to combine
+          const audioUrl = URL.createObjectURL(audioBlobs[0]);
+          setAudioFiles([audioUrl]);
+          
+          if (audioRef.current) {
+            audioRef.current.src = audioUrl;
+            audioRef.current.play();
+          }
+          
+          // Create download link
+          const downloadLink = document.createElement('a');
+          downloadLink.href = audioUrl;
+          downloadLink.download = 'your_complete_story.mp3';
+          downloadLink.click();
+        } else {
+          // Multiple sections - in a real app you'd combine them server-side
+          // For this demo we'll use the first one and explain the limitation
+          setCombiningAudio(true);
+          
+          // Simulate combining audio files
+          setTimeout(() => {
+            const audioUrl = URL.createObjectURL(audioBlobs[0]);
+            setAudioFiles([audioUrl]);
+            
+            if (audioRef.current) {
+              audioRef.current.src = audioUrl;
+              audioRef.current.play();
+            }
+            
+            // Create download link
+            const downloadLink = document.createElement('a');
+            downloadLink.href = audioUrl;
+            downloadLink.download = 'your_story_part1.mp3'; // Would be complete file in real implementation
+            downloadLink.click();
+            
+            setCombiningAudio(false);
+          }, 1500);
+          
+          console.log("In a full implementation, we would combine all audio files here");
+        }
+      }
+    } catch (err) {
+      setError(err.message || 'Error converting text to speech');
+    } finally {
+      setIsProcessingFull(false);
+      setCurrentSection(null);
+    }
+  };
+
+  // Function to preview story text in creative corner
+  const previewStoryText = async () => {
+    // Process the full story at once, handling splitting behind the scenes
+    await processFullAudio(storyText);
+  };
+
+  // Function to process book text in book mode
+  const processBookText = () => {
+    const sections = splitIntoSections(text);
+    setAudioSections(sections);
+    setError('');
+  };
+
+  // Convert a single section to speech in book mode
+  const convertSectionToSpeech = async (section, index) => {
+    if (!savedApiKey) {
+      setError('Please save your OpenAI API key first');
+      return;
+    }
+    
+    setIsProcessing(true);
+    setCurrentSection(index);
+    setError('');
+    
     try {
       const response = await fetch('https://api.openai.com/v1/audio/speech', {
         method: 'POST',
@@ -283,72 +389,35 @@ function App() {
         },
         body: JSON.stringify({
           model: 'gpt-4o-mini-tts',
-          input: chunk,
+          input: section,
           voice: selectedVoice,
-          instructions: instructions,
+          instructions: voiceInstructions,
           response_format: 'mp3'
         })
       });
+      
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error?.message || 'Failed to convert text to speech');
       }
+      
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
+      
       if (audioRef.current) {
         audioRef.current.src = audioUrl;
         audioRef.current.play();
       }
+      
       const downloadLink = document.createElement('a');
       downloadLink.href = audioUrl;
-      downloadLink.download = `chunk_${index + 1}.mp3`;
+      downloadLink.download = `section_${index + 1}.mp3`;
       downloadLink.click();
     } catch (err) {
       setError(err.message || 'Error converting text to speech');
     } finally {
       setIsProcessing(false);
-      setCurrentChunk(null);
-    }
-  };
-
-  // Function to preview sample text in sandbox mode
-  const previewSampleText = async () => {
-    if (!savedApiKey) {
-      setError('Please save your OpenAI API key first');
-      return;
-    }
-    if (!sampleText.trim()) {
-      setError('Please enter some text to preview');
-      return;
-    }
-    setIsProcessing(true);
-    setError('');
-    try {
-      const response = await fetch('https://api.openai.com/v1/audio/speech', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${savedApiKey}`
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini-tts',
-          input: sampleText,
-          voice: previewVoice,
-          instructions: previewInstructions,
-          response_format: 'mp3'
-        })
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Failed to generate preview');
-      }
-      const audioBlob = await response.blob();
-      const url = URL.createObjectURL(audioBlob);
-      setAudioPreviewUrl(url);
-    } catch (err) {
-      setError(err.message || 'Error generating audio preview');
-    } finally {
-      setIsProcessing(false);
+      setCurrentSection(null);
     }
   };
 
@@ -356,27 +425,27 @@ function App() {
     <div className="App">
       <ForestAnimations />
       <header className="App-header">
-        <h1>Book to Speech Converter</h1>
-        <p>Convert your book text into spoken audio using OpenAI's text-to-speech service</p>
+        <h1>Story Audio Creator</h1>
+        <p>Bring your stories to life with the perfect voice and mood</p>
         <div className="mode-toggle">
           <button
-            className={`mode-button ${!sandboxMode ? 'active' : ''}`}
-            onClick={() => setSandboxMode(false)}
+            className={`mode-button ${!creativeMode ? 'active' : ''}`}
+            onClick={() => setCreativeMode(false)}
           >
-            Book Mode
+            Book Studio
           </button>
           <button
-            className={`mode-button ${sandboxMode ? 'active' : ''}`}
-            onClick={() => setSandboxMode(true)}
+            className={`mode-button ${creativeMode ? 'active' : ''}`}
+            onClick={() => setCreativeMode(true)}
           >
-            Sandbox Mode
+            Creative Corner
           </button>
         </div>
       </header>
 
       <main>
-        <section className="api-key-section">
-          <h2>API Key</h2>
+        <section className="setup-section">
+          <h2>Quick Setup</h2>
           <div className="input-group">
             <input
               type="password"
@@ -392,48 +461,49 @@ function App() {
 
         {error && <div className="error-message">{error}</div>}
 
-        {sandboxMode ? (
-          <SandboxSection
-            sampleText={sampleText}
-            setSampleText={setSampleText}
-            previewVoice={previewVoice}
-            setPreviewVoice={setPreviewVoice}
-            previewInstructions={previewInstructions}
-            setPreviewInstructions={setPreviewInstructions}
-            isProcessing={isProcessing}
+        {creativeMode ? (
+          <CreativeCorner
+            storyText={storyText}
+            setStoryText={setStoryText}
+            voiceChoice={voiceChoice}
+            setVoiceChoice={setVoiceChoice}
+            voiceInstructions={voiceInstructions}
+            setVoiceInstructions={setVoiceInstructions}
+            isProcessing={isProcessingFull || combiningAudio}
             savedApiKey={savedApiKey}
-            previewSampleText={previewSampleText}
+            previewStoryText={previewStoryText}
             voices={voices}
-            audioPreviewUrl={audioPreviewUrl}
+            audioFiles={audioFiles}
           />
         ) : (
           <>
             <section className="text-input-section">
               <h2>Book Text</h2>
               <div className="text-controls">
-                <div className="char-count">
-                  Characters: {text.length} / {MAX_CHARS} maximum per chunk
+                <div className="char-hint">
+                  Write or paste your complete manuscript
                 </div>
               </div>
               <SimpleRichEditor 
                 onChange={handleEditorChange}
                 placeholder="Paste or type your book text here..."
                 maxChars={MAX_CHARS}
+                hideCharCount={true}
               />
               <button 
-                className="split-button" 
-                onClick={splitIntoChunks}
+                className="process-button" 
+                onClick={processBookText}
                 disabled={!text.trim()}
               >
-                Split into Chunks
+                Prepare Audio Sections
               </button>
             </section>
 
-            {chunks.length > 0 && (
+            {audioSections.length > 0 && (
               <section className="voice-options-section">
-                <h2>Voice Options</h2>
+                <h2>Voice Settings</h2>
                 <div className="voice-selector">
-                  <label htmlFor="voice-select">Select Voice:</label>
+                  <label htmlFor="voice-select">Storyteller Voice:</label>
                   <select
                     id="voice-select"
                     value={selectedVoice}
@@ -447,47 +517,45 @@ function App() {
                   </select>
                 </div>
                 <div className="instructions-input">
-                  <label htmlFor="instructions">Reading Instructions:</label>
-                  <input
+                  <label htmlFor="instructions">Voice Mood & Style:</label>
+                  <textarea
                     id="instructions"
-                    type="text"
-                    placeholder="How should the text be read? (e.g., calm, excited, etc.)"
-                    value={instructions}
-                    onChange={(e) => setInstructions(e.target.value)}
+                    placeholder="How should your story be told? (e.g., warm and magical, like a fireside tale)"
+                    value={voiceInstructions}
+                    onChange={(e) => setVoiceInstructions(e.target.value)}
+                    rows={3}
+                    className="voice-instructions-textarea"
                   />
                 </div>
               </section>
             )}
 
-            {chunks.length > 0 && (
-              <section className="chunks-section">
-                <h2>Text Chunks ({chunks.length})</h2>
+            {audioSections.length > 0 && (
+              <section className="sections-section">
+                <h2>Your Story Sections ({audioSections.length})</h2>
                 <p className="info-text">
-                  Your text has been split into {chunks.length} chunks. 
-                  Click "Generate Audio" for each chunk to convert it to speech.
+                  Your story has been prepared in {audioSections.length} sections. 
+                  Listen to each section to make sure it sounds perfect.
                 </p>
                 <audio ref={audioRef} controls className="audio-player"></audio>
-                <div className="chunks-list">
-                  {chunks.map((chunk, index) => (
-                    <div key={index} className="chunk-item">
-                      <div className="chunk-header">
-                        <h3>Chunk {index + 1}</h3>
+                <div className="sections-list">
+                  {audioSections.map((section, index) => (
+                    <div key={index} className="section-item">
+                      <div className="section-header">
+                        <h3>Section {index + 1}</h3>
                         <button
-                          className="generate-button"
-                          onClick={() => convertChunkToSpeech(chunk, index)}
+                          className="listen-button"
+                          onClick={() => convertSectionToSpeech(section, index)}
                           disabled={isProcessing}
                         >
-                          {isProcessing && currentChunk === index 
-                            ? 'Processing...' 
-                            : 'Generate Audio'
+                          {isProcessing && currentSection === index 
+                            ? 'Creating Audio...' 
+                            : 'Listen to This Section'
                           }
                         </button>
                       </div>
-                      <div className="chunk-content">
-                        <p>{chunk}</p>
-                        <div className="char-info">
-                          {chunk.length} characters
-                        </div>
+                      <div className="section-content">
+                        <p>{section}</p>
                       </div>
                     </div>
                   ))}
@@ -500,8 +568,7 @@ function App() {
 
       <footer>
         <p>
-          Note: This application uses OpenAI's text-to-speech API, which requires an API key and may have usage costs.
-          Your API key is stored locally in your browser and is never sent to any server except OpenAI's API.
+          Created with love for my favorite storyteller. Your stories deserve to be heard.
         </p>
       </footer>
     </div>

@@ -1,8 +1,8 @@
-// SimpleRichEditor.js - Tranquil Night Theme
+// SimpleRichEditor.js - Simplified for writers
 import React, { useState, useRef, useEffect } from 'react';
 // No need to import CSS as styles are included in App.css now
 
-const SimpleRichEditor = ({ onChange, placeholder, maxChars }) => {
+const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = false }) => {
   const editorRef = useRef(null);
   const [charCount, setCharCount] = useState(0);
   const [wordCount, setWordCount] = useState(0);
@@ -118,23 +118,13 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars }) => {
         </button>
         <span className="separator">|</span>
         <button type="button" onClick={() => formatText('formatBlock', '<h1>')} title="Chapter Title">
-          CH
+          Title
         </button>
         <button type="button" onClick={() => formatText('formatBlock', '<h2>')} title="Section Title">
-          SEC
+          Heading
         </button>
         <button type="button" onClick={() => formatText('formatBlock', '<p>')} title="Paragraph">
-          P
-        </button>
-        <span className="separator">|</span>
-        <button type="button" onClick={() => formatText('justifyLeft')} title="Align Left">
-          ←
-        </button>
-        <button type="button" onClick={() => formatText('justifyCenter')} title="Align Center">
-          ↔
-        </button>
-        <button type="button" onClick={() => formatText('justifyRight')} title="Align Right">
-          →
+          Text
         </button>
       </div>
       
@@ -150,9 +140,11 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars }) => {
       
       <div className="editor-footer">
         <div className="count-info">
-          <span className={charCount > maxChars ? 'exceeds-limit' : ''}>
-            Characters: {charCount}{maxChars ? ` / ${maxChars}` : ''}
-          </span>
+          {!hideCharCount && (
+            <span className={charCount > maxChars ? 'exceeds-limit' : ''}>
+              Characters: {charCount}{maxChars ? ` / ${maxChars}` : ''}
+            </span>
+          )}
           <span>Words: {wordCount}</span>
         </div>
         <div className="editor-actions">
@@ -161,10 +153,9 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars }) => {
             onClick={toggleToolbar} 
             className="toggle-button"
           >
-            {isToolbarVisible ? 'Hide Toolbar' : 'Show Toolbar'}
+            {isToolbarVisible ? 'Hide Formatting' : 'Show Formatting'}
           </button>
-          <button type="button" onClick={convertToPlainText}>Plain Text</button>
-          <button type="button" onClick={clearText}>Clear</button>
+          <button type="button" onClick={clearText}>Clear All</button>
         </div>
       </div>
     </div>
