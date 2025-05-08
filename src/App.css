@@ -1424,16 +1424,88 @@ body {
 /* Media Queries */
 @media (max-width: 768px) {
   .App {
-    padding: 15px;
+    padding: 10px;
+  }
+  
+  .App-header {
+    margin-bottom: 20px;
+    padding: 15px 0;
+  }
+  
+  .App-header h1 {
+    font-size: 2rem;
+  }
+  
+  .App-header h1::before, .App-header h1::after {
+    display: none;
+  }
+  
+  .App-header p {
+    font-size: 1rem;
+    padding: 0 10px;
+  }
+  
+  .mode-toggle::before {
+    width: 250px;
+  }
+  
+  .mode-button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+  
+  section {
+    padding: 20px 15px;
+    margin-bottom: 20px;
   }
   
   .input-group {
     flex-direction: column;
+    gap: 10px;
   }
   
   .section-header {
     flex-direction: column;
     gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .import-controls {
+    width: 100%;
+    margin-top: 5px;
+  }
+  
+  .import-button {
+    width: 100%;
+    margin-top: 5px;
+  }
+  
+  .story-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .story-textarea, .voice-instructions-textarea {
+    font-size: 0.95rem;
+    padding: 12px;
+  }
+  
+  .editor-content {
+    font-size: 0.95rem;
+    padding: 15px;
+    min-height: 250px;
+  }
+  
+  .editor-toolbar {
+    padding: 8px;
+    overflow-x: auto;
+    white-space: nowrap;
+    justify-content: flex-start;
+  }
+  
+  .editor-toolbar button {
+    padding: 6px 10px;
+    font-size: 12px;
   }
   
   .listen-button {
@@ -1442,6 +1514,7 @@ body {
   
   .button-group {
     flex-direction: column;
+    gap: 10px;
   }
   
   .instruction-categories {
@@ -1450,6 +1523,154 @@ body {
   
   .fox, .owl, .rabbit {
     display: none;
+  }
+  
+  .char-hint, .import-hint {
+    font-size: 0.8rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+  }
+  
+  .inspiration-box {
+    padding: 15px;
+  }
+  
+  .inspiration-box h3 {
+    font-size: 1.2rem;
+  }
+  
+  .process-button, .preview-button {
+    padding: 12px;
+    font-size: 1rem;
+  }
+  
+  .audio-preview {
+    padding: 15px;
+  }
+  
+  footer {
+    margin-top: 30px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Small mobile screens */
+@media (max-width: 480px) {
+  .App-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .voice-controls {
+    gap: 15px;
+  }
+  
+  .setup-section input {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+  
+  .mode-button {
+    padding: 8px 15px;
+    font-size: 0.85rem;
+  }
+  
+  .mode-toggle::before {
+    width: 220px;
+  }
+  
+  .editor-footer {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .count-info {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .editor-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  /* Improved instructions guide for small mobile */
+  .instructions-guide {
+    padding: 15px;
+    margin-top: 15px;
+  }
+  
+  .guide-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+  }
+  
+  .guide-header h3 {
+    font-size: 1.2rem;
+  }
+  
+  .guide-header p {
+    font-size: 0.9rem;
+  }
+  
+  .instruction-category {
+    padding: 12px;
+  }
+  
+  .category-header {
+    margin-bottom: 8px;
+  }
+  
+  .category-icon {
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+  }
+  
+  .category-title {
+    font-size: 1rem;
+  }
+  
+  .examples-list {
+    padding-left: 10px;
+  }
+  
+  .examples-list li {
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+  }
+  
+  .try-button {
+    margin-top: 3px;
+    padding: 2px 6px;
+    font-size: 0.75rem;
+    display: block;
+    margin-left: 0;
+  }
+  
+  .guide-tips {
+    padding: 15px;
+  }
+  
+  .guide-tips h4 {
+    font-size: 1rem;
+  }
+  
+  .tips-list {
+    padding-left: 15px;
+  }
+  
+  .tips-list li {
+    font-size: 0.85rem;
+  }
+  
+  .guide-toggle-button {
+    padding: 3px 6px;
+    font-size: 0.75rem;
   }
 }
 

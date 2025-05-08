@@ -9,8 +9,8 @@ const ForestAnimations = () => {
       leavesContainer.className = 'falling-leaves';
       document.body.appendChild(leavesContainer);
       
-      // Create leaves
-      const numLeaves = window.innerWidth < 768 ? 10 : 20;
+      // Create leaves - reduced number for smaller screens
+      const numLeaves = window.innerWidth < 480 ? 5 : (window.innerWidth < 768 ? 10 : 20);
       
       for (let i = 0; i < numLeaves; i++) {
         const leaf = document.createElement('div');
@@ -41,8 +41,8 @@ const ForestAnimations = () => {
       firefliesContainer.className = 'fireflies';
       document.body.appendChild(firefliesContainer);
       
-      // Create fireflies
-      const numFireflies = window.innerWidth < 768 ? 15 : 30;
+      // Create fireflies - reduced number for smaller screens
+      const numFireflies = window.innerWidth < 480 ? 8 : (window.innerWidth < 768 ? 15 : 30);
       
       for (let i = 0; i < numFireflies; i++) {
         const firefly = document.createElement('div');
