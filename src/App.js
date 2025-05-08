@@ -21,10 +21,16 @@ const CreativeCorner = ({
   savedApiKey,
   previewStoryText,
   voices,
-  audioFiles
+  audioFiles,
+  onFileImport,
+  onPaste,
+  isImporting
 }) => {
   // Local state for controlling the visibility of the instructions guide
   const [showInstructionsGuide, setShowInstructionsGuide] = useState(false);
+  
+  // File input reference
+  const fileInputRef = useRef(null);
 
   // Handle selecting an instruction from the guide
   const handleSelectInstruction = (instruction) => {
@@ -35,6 +41,11 @@ const CreativeCorner = ({
   const toggleGuide = (e) => {
     e.stopPropagation();
     setShowInstructionsGuide(!showInstructionsGuide);
+  };
+  
+  // Trigger file input click
+  const triggerFileInput = () => {
+    fileInputRef.current.click();
   };
 
   return (
@@ -88,17 +99,40 @@ const CreativeCorner = ({
       )}
 
       <div className="story-text-container">
-        <label htmlFor="story-text">Your Story:</label>
+        <div className="story-header">
+          <label htmlFor="story-text">Your Story:</label>
+          <div className="import-controls">
+            <input 
+              type="file"
+              ref={fileInputRef}
+              onChange={(e) => onFileImport(e, 'creative')}
+              style={{ display: 'none' }}
+              accept=".txt,.md,.doc,.docx,.rtf"
+            />
+            <button 
+              onClick={triggerFileInput}
+              className="import-button"
+              disabled={isImporting}
+              title="Import story from a text file (TXT, DOC, DOCX, RTF, MD)"
+            >
+              {isImporting ? 'Importing...' : 'Import File'}
+            </button>
+          </div>
+        </div>
         <textarea
           id="story-text"
           value={storyText}
           onChange={(e) => setStoryText(e.target.value)}
+          onPaste={(e) => onPaste(e, 'creative')}
           rows={10}
           className="story-textarea"
-          placeholder="Write or paste your story here..."
+          placeholder="Write or paste your story here (you can paste directly from Google Docs)..."
         ></textarea>
         <div className="char-hint">
           Write as much as you want - we'll take care of the rest
+        </div>
+        <div className="import-hint">
+          <strong>Import options:</strong> Use the Import File button or simply copy & paste directly from Google Docs
         </div>
       </div>
 
@@ -157,6 +191,9 @@ function App() {
   const [audioFiles, setAudioFiles] = useState([]);
   const [voiceChoice, setVoiceChoice] = useState('alloy');
   const [combiningAudio, setCombiningAudio] = useState(false);
+  
+  // State for file import
+  const [isImporting, setIsImporting] = useState(false);
 
   // Available voices
   const voices = [
@@ -199,6 +236,68 @@ function App() {
   const handleEditorChange = (html, plainText) => {
     setHtmlText(html);
     setText(plainText);
+  };
+  
+  // Function to handle local file import
+  const handleFileImport = (event, targetMode) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    setIsImporting(true);
+    setError('');
+    
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      try {
+        const content = e.target.result;
+        
+        // Update the appropriate text field based on mode
+        if (targetMode === 'creative') {
+          setStoryText(content);
+        } else {
+          setText(content);
+          setHtmlText(content);
+        }
+        
+        setIsImporting(false);
+      } catch (err) {
+        setError('Failed to import file: ' + err.message);
+        setIsImporting(false);
+      }
+    };
+    
+    reader.onerror = () => {
+      setError('Failed to read file');
+      setIsImporting(false);
+    };
+    
+    reader.readAsText(file);
+    
+    // Reset the file input
+    event.target.value = null;
+  };
+  
+  // Function to handle pasted content
+  const handlePaste = (event, targetMode) => {
+    // Get the pasted text from clipboard
+    const pastedText = event.clipboardData.getData('text/plain');
+    
+    if (!pastedText) return;
+    
+    // If the text is long, it's likely a copy from somewhere else (like Google Docs)
+    if (pastedText.length > 50) {
+      // Update the appropriate text field based on mode
+      if (targetMode === 'creative') {
+        setStoryText(pastedText);
+      } else {
+        setText(pastedText);
+        setHtmlText(pastedText);
+      }
+      
+      // Prevent the default paste behavior to avoid double-pasting
+      event.preventDefault();
+    }
   };
 
   // Function to split text into sections based on character limit (hidden from user)
@@ -474,6 +573,9 @@ function App() {
             previewStoryText={previewStoryText}
             voices={voices}
             audioFiles={audioFiles}
+            onFileImport={handleFileImport}
+            onPaste={handlePaste}
+            isImporting={isImporting}
           />
         ) : (
           <>
@@ -483,12 +585,33 @@ function App() {
                 <div className="char-hint">
                   Write or paste your complete manuscript
                 </div>
+                <div className="import-hint">
+                  <strong>Import options:</strong> Use the Import File button or simply copy & paste directly from Google Docs
+                </div>
+                <div className="import-controls">
+                  <input 
+                    type="file"
+                    id="book-file-input"
+                    style={{ display: 'none' }}
+                    onChange={(e) => handleFileImport(e, 'book')}
+                    accept=".txt,.md,.doc,.docx,.rtf"
+                  />
+                  <button 
+                    onClick={() => document.getElementById('book-file-input').click()}
+                    className="import-button"
+                    disabled={isImporting}
+                    title="Import manuscript from a text file (TXT, DOC, DOCX, RTF, MD)"
+                  >
+                    {isImporting ? 'Importing...' : 'Import File'}
+                  </button>
+                </div>
               </div>
               <SimpleRichEditor 
                 onChange={handleEditorChange}
-                placeholder="Paste or type your book text here..."
+                placeholder="Paste or type your book text here (you can paste directly from Google Docs)..."
                 maxChars={MAX_CHARS}
                 hideCharCount={true}
+                onCustomPaste={(e) => handlePaste(e, 'book')}
               />
               <button 
                 className="process-button" 

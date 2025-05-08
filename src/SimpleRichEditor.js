@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 // No need to import CSS as styles are included in App.css now
 
-const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = false }) => {
+const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = false, onCustomPaste }) => {
   const editorRef = useRef(null);
   const [charCount, setCharCount] = useState(0);
   const [wordCount, setWordCount] = useState(0);
@@ -64,6 +64,18 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
 
   // Handle pasting to strip unwanted formatting
   const handlePaste = (e) => {
+    // If there's a custom paste handler provided, call it first
+    if (onCustomPaste) {
+      // Let the custom handler decide whether to preventDefault
+      onCustomPaste(e);
+      
+      // If the default was already prevented, return early
+      if (e.defaultPrevented) {
+        updateCounts();
+        return;
+      }
+    }
+    
     e.preventDefault();
     
     // Get text from clipboard
