@@ -1,8 +1,23 @@
 // VoiceInstructionsGuide.js - Updated for better usability
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const VoiceInstructionsGuide = ({ onSelectInstruction }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
   
   // Define instruction categories - expanded with more creative writing focused options
   const instructionCategories = [
@@ -148,6 +163,56 @@ const VoiceInstructionsGuide = ({ onSelectInstruction }) => {
     }
   };
   
+  // Mobile-optimized category component
+  const MobileCategoryItem = ({ category, isSelected, onToggle }) => (
+    <div 
+      className={`instruction-category mobile-category ${isSelected ? 'mobile-active' : ''}`}
+      onClick={(e) => onToggle(category.id, e)}
+    >
+      <div className="category-header">
+        <div className="category-icon">{category.icon}</div>
+        <div className="category-title">{category.title}</div>
+        <div className="mobile-toggle-icon">{isSelected ? '−' : '+'}</div>
+      </div>
+      
+      {isSelected && (
+        <ul className="examples-list mobile-examples">
+          {category.examples.map((example, index) => (
+            <li key={index} onClick={(e) => e.stopPropagation()}>
+              <div className="mobile-example-header">
+                <strong>{example.label}</strong>
+                <button 
+                  className="try-button"
+                  onClick={(e) => handleTryExample(example.instruction, e)}
+                >
+                  Use
+                </button>
+              </div>
+              <div className="mobile-example-text">{example.instruction}</div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+  
+  // Mobile-optimized combination component
+  const MobileCombinationItem = ({ example }) => (
+    <div className="instruction-category mobile-combination">
+      <div className="category-header">
+        <div className="category-icon">{example.icon}</div>
+        <div className="category-title">{example.title}</div>
+        <button 
+          className="try-button mobile-use-button"
+          onClick={(e) => handleTryExample(example.instruction, e)}
+        >
+          Use
+        </button>
+      </div>
+      <p className="mobile-combo-text">{example.instruction}</p>
+    </div>
+  );
+  
   return (
     <div className="instructions-guide" onClick={(e) => e.stopPropagation()}>
       <div className="guide-header">
@@ -155,39 +220,54 @@ const VoiceInstructionsGuide = ({ onSelectInstruction }) => {
         <p>Find the perfect way to tell your story with these voice styles</p>
       </div>
       
-      <div className="guide-section">
-        <p>Select a style below to help shape how your story is read. The voice will follow your instructions to create the perfect mood and delivery for your writing.</p>
+      <div className={`guide-section ${isMobile ? 'mobile-guide' : ''}`}>
+        {!isMobile && (
+          <p>Select a style below to help shape how your story is read. The voice will follow your instructions to create the perfect mood and delivery for your writing.</p>
+        )}
         
         <h4>Style Categories</h4>
         <div className="instruction-categories">
-          {instructionCategories.map(category => (
-            <div 
-              key={category.id} 
-              className="instruction-category"
-              onClick={(e) => toggleCategory(category.id, e)}
-            >
-              <div className="category-header">
-                <div className="category-icon">{category.icon}</div>
-                <div className="category-title">{category.title}</div>
+          {isMobile ? (
+            // Mobile optimized categories
+            instructionCategories.map(category => (
+              <MobileCategoryItem 
+                key={category.id}
+                category={category}
+                isSelected={selectedCategory === category.id}
+                onToggle={toggleCategory}
+              />
+            ))
+          ) : (
+            // Desktop categories
+            instructionCategories.map(category => (
+              <div 
+                key={category.id} 
+                className="instruction-category"
+                onClick={(e) => toggleCategory(category.id, e)}
+              >
+                <div className="category-header">
+                  <div className="category-icon">{category.icon}</div>
+                  <div className="category-title">{category.title}</div>
+                </div>
+                
+                {selectedCategory === category.id && (
+                  <ul className="examples-list">
+                    {category.examples.map((example, index) => (
+                      <li key={index} onClick={(e) => e.stopPropagation()}>
+                        <strong>{example.label}:</strong> {example.instruction}
+                        <button 
+                          className="try-button"
+                          onClick={(e) => handleTryExample(example.instruction, e)}
+                        >
+                          Use this
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
-              
-              {selectedCategory === category.id && (
-                <ul className="examples-list">
-                  {category.examples.map((example, index) => (
-                    <li key={index} onClick={(e) => e.stopPropagation()}>
-                      <strong>{example.label}:</strong> {example.instruction}
-                      <button 
-                        className="try-button"
-                        onClick={(e) => handleTryExample(example.instruction, e)}
-                      >
-                        Use this
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          ))}
+            ))
+          )}
         </div>
         
         <div className="guide-tips">
@@ -202,21 +282,29 @@ const VoiceInstructionsGuide = ({ onSelectInstruction }) => {
         
         <h4>Ready-to-use Combinations:</h4>
         <div className="instruction-categories">
-          {combinationExamples.map(example => (
-            <div key={example.id} className="instruction-category" onClick={(e) => e.stopPropagation()}>
-              <div className="category-header">
-                <div className="category-icon">{example.icon}</div>
-                <div className="category-title">{example.title}</div>
+          {isMobile ? (
+            // Mobile optimized combinations
+            combinationExamples.map(example => (
+              <MobileCombinationItem key={example.id} example={example} />
+            ))
+          ) : (
+            // Desktop combinations
+            combinationExamples.map(example => (
+              <div key={example.id} className="instruction-category" onClick={(e) => e.stopPropagation()}>
+                <div className="category-header">
+                  <div className="category-icon">{example.icon}</div>
+                  <div className="category-title">{example.title}</div>
+                </div>
+                <p style={{ margin: '10px 0', color: '#c9c4a7' }}>{example.instruction}</p>
+                <button 
+                  className="try-button"
+                  onClick={(e) => handleTryExample(example.instruction, e)}
+                >
+                  Use this style
+                </button>
               </div>
-              <p style={{ margin: '10px 0', color: '#c9c4a7' }}>{example.instruction}</p>
-              <button 
-                className="try-button"
-                onClick={(e) => handleTryExample(example.instruction, e)}
-              >
-                Use this style
-              </button>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>

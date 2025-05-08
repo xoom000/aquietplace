@@ -48,6 +48,22 @@ const CreativeCorner = ({
     fileInputRef.current.click();
   };
 
+  // Check if device is mobile
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+
   return (
     <section className="creative-corner">
       <h2>Story Lab</h2>
@@ -56,7 +72,7 @@ const CreativeCorner = ({
         Experiment with how your writing sounds when read aloud before finalizing your story.
       </p>
 
-      <div className="voice-controls">
+      <div className={`voice-controls ${isMobile ? 'mobile-controls' : ''}`}>
         <div className="voice-selector">
           <label htmlFor="voice-choice">Storyteller Voice:</label>
           <select
@@ -73,8 +89,8 @@ const CreativeCorner = ({
         </div>
 
         <div className="instructions-input">
-          <label htmlFor="voice-instructions">
-            Voice Mood & Style:
+          <div className="style-label-container">
+            <label htmlFor="voice-instructions">Voice Mood & Style:</label>
             <button 
               className="guide-toggle-button" 
               onClick={toggleGuide}
@@ -82,13 +98,13 @@ const CreativeCorner = ({
             >
               {showInstructionsGuide ? 'Hide Ideas' : 'Get Ideas'}
             </button>
-          </label>
+          </div>
           <textarea
             id="voice-instructions"
             placeholder="How should your story be told? (e.g., warm and magical, like a fireside tale)"
             value={voiceInstructions}
             onChange={(e) => setVoiceInstructions(e.target.value)}
-            rows={3}
+            rows={isMobile ? 2 : 3}
             className="voice-instructions-textarea"
           />
         </div>
@@ -98,7 +114,7 @@ const CreativeCorner = ({
         <VoiceInstructionsGuide onSelectInstruction={handleSelectInstruction} />
       )}
 
-      <div className="story-text-container">
+      <div className={`story-text-container ${isMobile ? 'mobile-story-container' : ''}`}>
         <div className="story-header">
           <label htmlFor="story-text">Your Story:</label>
           <div className="import-controls">
@@ -115,7 +131,7 @@ const CreativeCorner = ({
               disabled={isImporting}
               title="Import story from a text file (TXT, DOC, DOCX, RTF, MD)"
             >
-              {isImporting ? 'Importing...' : 'Import File'}
+              {isImporting ? 'Importing...' : (isMobile ? 'Import' : 'Import File')}
             </button>
           </div>
         </div>
@@ -124,16 +140,18 @@ const CreativeCorner = ({
           value={storyText}
           onChange={(e) => setStoryText(e.target.value)}
           onPaste={(e) => onPaste(e, 'creative')}
-          rows={10}
+          rows={isMobile ? 8 : 10}
           className="story-textarea"
           placeholder="Write or paste your story here (you can paste directly from Google Docs)..."
         ></textarea>
         <div className="char-hint">
           Write as much as you want - we'll take care of the rest
         </div>
-        <div className="import-hint">
-          <strong>Import options:</strong> Use the Import File button or simply copy & paste directly from Google Docs
-        </div>
+        {!isMobile && (
+          <div className="import-hint">
+            <strong>Import options:</strong> Use the Import File button or simply copy & paste directly from Google Docs
+          </div>
+        )}
       </div>
 
       {audioFiles && audioFiles.length > 0 && (
@@ -143,29 +161,31 @@ const CreativeCorner = ({
         </div>
       )}
 
-      <div className="button-group">
+      <div className={`button-group ${isMobile ? 'mobile-buttons' : ''}`}>
         <button 
           className="preview-button"
           onClick={previewStoryText}
           disabled={isProcessing || !storyText.trim() || !savedApiKey}
         >
-          {isProcessing ? 'Reading Your Story...' : 'Read My Story Aloud'}
+          {isProcessing ? 'Reading...' : (isMobile ? 'Read Aloud' : 'Read My Story Aloud')}
         </button>
         <button 
           className="reset-button"
           onClick={() => setStoryText("")}
         >
-          Clear Story
+          {isMobile ? 'Clear' : 'Clear Story'}
         </button>
       </div>
 
-      <div className="inspiration-box">
-        <h3>Writer's Corner</h3>
-        <p>
-          Stories sound different when read aloud. Use this space to perfect how your tales are told - 
-          experiment with different voices and moods to find the perfect match for your writing style.
-        </p>
-      </div>
+      {!isMobile && (
+        <div className="inspiration-box">
+          <h3>Writer's Corner</h3>
+          <p>
+            Stories sound different when read aloud. Use this space to perfect how your tales are told - 
+            experiment with different voices and moods to find the perfect match for your writing style.
+          </p>
+        </div>
+      )}
     </section>
   );
 };
