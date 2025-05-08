@@ -20,6 +20,25 @@
   padding: 0;
 }
 
+/* Global scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(44, 41, 21, 0.6);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b56b22;
+}
+
 body {
   font-family: 'Bitter', 'Merriweather', Georgia, serif;
   line-height: 1.6;
@@ -340,6 +359,25 @@ h2::after {
   color: var(--text-color);
   outline: none;
   font-family: 'Bitter', Georgia, serif;
+}
+
+/* Custom scrollbar for rich text editor */
+.editor-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.editor-content::-webkit-scrollbar-track {
+  background: rgba(44, 41, 21, 0.6); 
+  border-radius: 3px;
+}
+
+.editor-content::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border-radius: 3px;
+}
+
+.editor-content::-webkit-scrollbar-thumb:hover {
+  background: #b56b22;
 }
 
 .editor-content:empty:before {
@@ -683,6 +721,25 @@ audio::-webkit-media-controls-time-remaining-display {
   outline: none;
   border-color: var(--accent-color);
   box-shadow: 0 0 0 2px rgba(204, 156, 58, 0.3);
+}
+
+/* Custom scrollbar styling */
+.story-textarea::-webkit-scrollbar {
+  width: 10px;
+}
+
+.story-textarea::-webkit-scrollbar-track {
+  background: rgba(44, 41, 21, 0.6);
+  border-radius: 3px;
+}
+
+.story-textarea::-webkit-scrollbar-thumb {
+  background: var(--secondary-color);
+  border-radius: 3px;
+}
+
+.story-textarea::-webkit-scrollbar-thumb:hover {
+  background: #b56b22;
 }
 
 .story-text-container {
