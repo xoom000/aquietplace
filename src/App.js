@@ -23,6 +23,7 @@ const CreativeCorner = ({
   previewStoryText,
   voices,
   audioFiles,
+  setAudioFiles,
   onFileImport,
   onPaste,
   isImporting
@@ -206,8 +207,9 @@ function App() {
   const [isProcessingFull, setIsProcessingFull] = useState(false);
   const audioRef = useRef(null);
   
-  // Get API key from environment variable
-  const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
+  // API key management - use env in dev, user input in production
+  const [apiKey, setApiKey] = useState(process.env.REACT_APP_OPENAI_API_KEY || '');
+  const [showApiKeyInput, setShowApiKeyInput] = useState(!apiKey);
   
   // State variables for creative corner (formerly sandbox mode)
   const [creativeMode, setCreativeMode] = useState(true); // Default to creative mode
@@ -233,9 +235,13 @@ function App() {
     { id: 'sage', name: 'Sage' }
   ];
 
-  // Clear any stored API keys from localStorage (cleanup)
+  // Load API key from localStorage if available
   useEffect(() => {
-    localStorage.removeItem('openai_api_key');
+    const storedKey = localStorage.getItem('temp_api_key');
+    if (storedKey && !apiKey) {
+      setApiKey(storedKey);
+      setShowApiKeyInput(false);
+    }
   }, []);
 
   // Function to handle editor changes
@@ -523,7 +529,29 @@ function App() {
       </header>
 
       <main>
-        {/* Removed API key UI - now using environment variable */}
+        {showApiKeyInput && (
+          <div className="api-key-bar">
+            <input
+              type="password"
+              placeholder="Enter OpenAI API key"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              className="api-key-input"
+            />
+            <button 
+              onClick={() => {
+                if (apiKey) {
+                  setShowApiKeyInput(false);
+                  localStorage.setItem('temp_api_key', apiKey);
+                }
+              }}
+              disabled={!apiKey}
+              className="api-key-save"
+            >
+              Save
+            </button>
+          </div>
+        )}
 
         {error && <div className="error-message">{error}</div>}
 
@@ -540,6 +568,7 @@ function App() {
             previewStoryText={previewStoryText}
             voices={voices}
             audioFiles={audioFiles}
+            setAudioFiles={setAudioFiles}
             onFileImport={handleFileImport}
             onPaste={handlePaste}
             isImporting={isImporting}

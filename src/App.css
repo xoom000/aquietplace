@@ -97,6 +97,48 @@ body::before {
   }
 }
 
+/* API Key Bar */
+.api-key-bar {
+  background: rgba(44, 41, 21, 0.9);
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.api-key-input {
+  padding: 8px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  color: var(--text-color);
+  font-size: 14px;
+  width: 300px;
+}
+
+.api-key-save {
+  padding: 8px 20px;
+  background: var(--primary-color);
+  color: var(--text-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.api-key-save:hover:not(:disabled) {
+  background: var(--hover-color);
+}
+
+.api-key-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* Header Section */
 .App-header {
   text-align: center;
