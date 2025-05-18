@@ -208,8 +208,8 @@ function App() {
   const audioRef = useRef(null);
   
   // API key management - use env in dev, user input in production
-  const [apiKey, setApiKey] = useState(process.env.REACT_APP_OPENAI_API_KEY || '');
-  const [showApiKeyInput, setShowApiKeyInput] = useState(!apiKey);
+  // Store in sessionStorage (safer than localStorage)
+  const [apiKey, setApiKey] = useState('');
   
   // State variables for creative corner (formerly sandbox mode)
   const [creativeMode, setCreativeMode] = useState(true); // Default to creative mode
@@ -235,12 +235,17 @@ function App() {
     { id: 'sage', name: 'Sage' }
   ];
 
-  // Load API key from localStorage if available
+  // Use sessionStorage - persists until browser closes
   useEffect(() => {
-    const storedKey = localStorage.getItem('temp_api_key');
-    if (storedKey && !apiKey) {
-      setApiKey(storedKey);
-      setShowApiKeyInput(false);
+    // Check for environment variable first
+    if (process.env.REACT_APP_OPENAI_API_KEY) {
+      setApiKey(process.env.REACT_APP_OPENAI_API_KEY);
+    } else {
+      // Otherwise check sessionStorage
+      const storedKey = sessionStorage.getItem('openai_api_key');
+      if (storedKey) {
+        setApiKey(storedKey);
+      }
     }
   }, []);
 
@@ -529,11 +534,15 @@ function App() {
       </header>
 
       <main>
-        {showApiKeyInput && (
+        {!apiKey && (
           <div className="api-key-bar">
+            <label htmlFor="apiKeyInput" style={{ marginRight: '10px' }}>
+              OpenAI API Key Required:
+            </label>
             <input
+              id="apiKeyInput"
               type="password"
-              placeholder="Enter OpenAI API key"
+              placeholder="Enter your OpenAI API key"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               className="api-key-input"
@@ -541,14 +550,28 @@ function App() {
             <button 
               onClick={() => {
                 if (apiKey) {
-                  setShowApiKeyInput(false);
-                  localStorage.setItem('temp_api_key', apiKey);
+                  sessionStorage.setItem('openai_api_key', apiKey);
                 }
               }}
               disabled={!apiKey}
               className="api-key-save"
             >
-              Save
+              Save for Session
+            </button>
+          </div>
+        )}
+        
+        {apiKey && (
+          <div className="api-key-status">
+            <span>API Key: ****{apiKey.slice(-4)}</span>
+            <button 
+              onClick={() => {
+                setApiKey('');
+                sessionStorage.removeItem('openai_api_key');
+              }}
+              className="clear-key-btn"
+            >
+              Clear Key
             </button>
           </div>
         )}

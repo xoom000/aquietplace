@@ -107,6 +107,13 @@ body::before {
   gap: 10px;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+}
+
+.api-key-bar label {
+  color: var(--text-color);
+  font-weight: bold;
 }
 
 .api-key-input {
@@ -137,6 +144,36 @@ body::before {
 .api-key-save:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* API Key Status */
+.api-key-status {
+  text-align: center;
+  padding: 10px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: var(--text-color);
+  opacity: 0.8;
+}
+
+.api-key-status span {
+  margin-right: 15px;
+}
+
+.clear-key-btn {
+  padding: 5px 15px;
+  background: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.clear-key-btn:hover {
+  background: var(--error-color);
+  border-color: var(--error-color);
 }
 
 /* Header Section */
