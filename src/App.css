@@ -146,6 +146,48 @@ body::before {
   cursor: not-allowed;
 }
 
+.api-key-help-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  color: var(--bg-color);
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.api-key-help-btn:hover {
+  background: var(--hover-color);
+  transform: scale(1.1);
+}
+
+.api-key-info {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--text-color);
+  opacity: 0.8;
+  font-size: 14px;
+}
+
+.api-key-info .help-icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  background: var(--accent-color);
+  color: var(--bg-color);
+  border-radius: 50%;
+  text-align: center;
+  line-height: 18px;
+  font-weight: bold;
+  margin: 0 4px;
+}
+
 /* API Key Status */
 .api-key-status {
   text-align: center;

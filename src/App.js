@@ -6,6 +6,7 @@ import SimpleRichEditor from './SimpleRichEditor';
 import ForestAnimations from './ForestAnimations';
 import VoiceInstructionsGuide from './VoiceInstructionsGuide';
 import EmbeddedAudioPlayer from './EmbeddedAudioPlayer';
+import ApiKeyHelp from './ApiKeyHelp';
 
 // Maximum character limit for OpenAI's text-to-speech API (hidden from user)
 const MAX_CHARS = 4096;
@@ -220,6 +221,9 @@ function App() {
   
   // State for file import
   const [isImporting, setIsImporting] = useState(false);
+  
+  // State for API key help modal
+  const [showApiKeyHelp, setShowApiKeyHelp] = useState(false);
 
   // Available voices
   const voices = [
@@ -558,6 +562,19 @@ function App() {
             >
               Save for Session
             </button>
+            <button 
+              onClick={() => setShowApiKeyHelp(true)}
+              className="api-key-help-btn"
+              title="How to get an API key"
+            >
+              ?
+            </button>
+          </div>
+        )}
+        
+        {!apiKey && (
+          <div className="api-key-info">
+            <p>Need an API key? Click the <span className="help-icon">?</span> button above for step-by-step instructions.</p>
           </div>
         )}
         
@@ -713,6 +730,11 @@ function App() {
           Created with love for my favorite storyteller. Your stories deserve to be heard.
         </p>
       </footer>
+      
+      <ApiKeyHelp 
+        isOpen={showApiKeyHelp} 
+        onClose={() => setShowApiKeyHelp(false)} 
+      />
     </div>
   );
 }

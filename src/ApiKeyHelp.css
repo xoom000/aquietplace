@@ -1,0 +1,187 @@
+/* ApiKeyHelp.css - Styling for the API Key Help Modal */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.api-key-help-modal {
+  background-color: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  font-size: 24px;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.modal-close:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.api-key-help-modal h2 {
+  color: var(--accent-color);
+  margin-bottom: 25px;
+  font-size: 24px;
+  text-align: center;
+}
+
+.help-steps {
+  margin-bottom: 25px;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.step-number {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.step-content h3 {
+  color: var(--text-color);
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.step-content p {
+  color: var(--text-color);
+  opacity: 0.9;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.step-content a {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.step-content a:hover {
+  text-decoration: underline;
+}
+
+.warning {
+  color: var(--error-color);
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.additional-info {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.additional-info h3 {
+  color: var(--text-color);
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.additional-info ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.additional-info li {
+  color: var(--text-color);
+  opacity: 0.9;
+  margin-bottom: 8px;
+  padding-left: 20px;
+  position: relative;
+  font-size: 14px;
+}
+
+.additional-info li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+.help-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.help-links a {
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 12px 16px;
+  border-radius: 6px;
+  color: var(--accent-color);
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  font-size: 14px;
+}
+
+.help-links a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .api-key-help-modal {
+    padding: 20px;
+    width: 95%;
+  }
+  
+  .step {
+    padding: 10px;
+  }
+  
+  .step-number {
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+  }
+}
