@@ -7,7 +7,7 @@ import ForestAnimations from './ForestAnimations';
 import VoiceInstructionsGuide from './VoiceInstructionsGuide';
 import EmbeddedAudioPlayer from './EmbeddedAudioPlayer';
 import ApiKeyHelp from './ApiKeyHelp';
-import CustomRulesManager from './CustomRulesManager';
+import ReadingRulesDisplay from './ReadingRulesDisplay';
 import { formatTextForTTS, enhanceVoiceInstructions } from './formatTextForTTS';
 import readingInstructions from './instructions.json';
 
@@ -111,11 +111,11 @@ const CreativeCorner = ({
         <button 
           className="manage-rules-btn"
           onClick={() => setShowCustomRules(true)}
-          title="Manage custom reading rules"
+          title="View reading rules reference"
         >
-          ⚙️ Custom Reading Rules
+          📖 View Reading Rules
         </button>
-        <p className="rules-hint">Define how specific text patterns should be read aloud</p>
+        <p className="rules-hint">See how punctuation and formatting affect narration</p>
       </div>
 
       <div className="story-text-container">
@@ -773,7 +773,8 @@ function App() {
       />
       
       {showCustomRules && (
-        <CustomRulesManager 
+        <ReadingRulesDisplay 
+          isOpen={showCustomRules}
           onClose={() => setShowCustomRules(false)} 
         />
       )}
