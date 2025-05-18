@@ -540,35 +540,37 @@ function App() {
       <main>
         {!apiKey && (
           <div className="api-key-bar">
-            <label htmlFor="apiKeyInput" style={{ marginRight: '10px' }}>
+            <label htmlFor="apiKeyInput">
               OpenAI API Key Required:
             </label>
-            <input
-              id="apiKeyInput"
-              type="password"
-              placeholder="Enter your OpenAI API key"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              className="api-key-input"
-            />
-            <button 
-              onClick={() => {
-                if (apiKey) {
-                  sessionStorage.setItem('openai_api_key', apiKey);
-                }
-              }}
-              disabled={!apiKey}
-              className="api-key-save"
-            >
-              Save for Session
-            </button>
-            <button 
-              onClick={() => setShowApiKeyHelp(true)}
-              className="api-key-help-btn"
-              title="How to get an API key"
-            >
-              ?
-            </button>
+            <div className="api-key-controls">
+              <input
+                id="apiKeyInput"
+                type="password"
+                placeholder="Enter your OpenAI API key"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                className="api-key-input"
+              />
+              <button 
+                onClick={() => {
+                  if (apiKey) {
+                    sessionStorage.setItem('openai_api_key', apiKey);
+                  }
+                }}
+                disabled={!apiKey}
+                className="api-key-save"
+              >
+                Save for Session
+              </button>
+              <button 
+                onClick={() => setShowApiKeyHelp(true)}
+                className="api-key-help-btn"
+                title="How to get an API key"
+              >
+                ?
+              </button>
+            </div>
           </div>
         )}
         
