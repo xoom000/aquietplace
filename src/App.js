@@ -7,6 +7,8 @@ import ForestAnimations from './ForestAnimations';
 import VoiceInstructionsGuide from './VoiceInstructionsGuide';
 import EmbeddedAudioPlayer from './EmbeddedAudioPlayer';
 import ApiKeyHelp from './ApiKeyHelp';
+import { formatTextForTTS, enhanceVoiceInstructions } from './formatTextForTTS';
+import readingInstructions from './instructions.json';
 
 // Maximum character limit for OpenAI's text-to-speech API (hidden from user)
 const MAX_CHARS = 4096;
@@ -15,6 +17,8 @@ const MAX_CHARS = 4096;
 const CreativeCorner = ({
   storyText,
   setStoryText,
+  storyHtml,
+  setStoryHtml,
   voiceChoice,
   setVoiceChoice,
   voiceInstructions,
@@ -125,6 +129,7 @@ const CreativeCorner = ({
         <SimpleRichEditor 
           onChange={(html, plainText) => {
             setStoryText(plainText);
+            setStoryHtml(html);
           }}
           placeholder="Write or paste your story here (you can paste directly from Google Docs)..."
           maxChars={MAX_CHARS * 5} // Allow longer stories in Creative Corner
@@ -153,6 +158,7 @@ const CreativeCorner = ({
           className="reset-button"
           onClick={() => {
             setStoryText("");
+            setStoryHtml("");
             setAudioFiles([]);
           }}
         >
@@ -216,6 +222,7 @@ function App() {
   // State variables for creative corner (formerly sandbox mode)
   const [creativeMode, setCreativeMode] = useState(true); // Default to creative mode
   const [storyText, setStoryText] = useState('');
+  const [storyHtml, setStoryHtml] = useState('');
   const [audioFiles, setAudioFiles] = useState([]);
   const [voiceChoice, setVoiceChoice] = useState('alloy');
   const [combiningAudio, setCombiningAudio] = useState(false);
@@ -323,14 +330,17 @@ function App() {
   };
 
   // Function to split text into sections based on character limit (hidden from user)
-  const splitIntoSections = (inputText) => {
+  const splitIntoSections = (inputText, htmlText = null) => {
     if (!inputText.trim()) {
       setError('Please enter some text');
       return [];
     }
 
+    // If we have HTML content, use it to preserve formatting
+    const textToProcess = htmlText ? formatTextForTTS(htmlText) : inputText;
+
     // Split by paragraphs (double newlines)
-    const paragraphs = inputText.split(/\n\s*\n/);
+    const paragraphs = textToProcess.split(/\n\s*\n/);
     
     const newSections = [];
     let currentSection = '';
@@ -389,6 +399,7 @@ function App() {
     
     try {
       // Split text into sections based on API limit
+      // We don't need to send HTML here since inputText is already formatted
       const sections = splitIntoSections(inputText);
       if (sections.length === 0) return;
       
@@ -410,7 +421,7 @@ function App() {
             model: 'gpt-4o-mini-tts',
             input: sections[i],
             voice: creativeMode ? voiceChoice : selectedVoice,
-            instructions: creativeMode ? voiceInstructions : voiceInstructions,
+            instructions: enhanceVoiceInstructions(voiceInstructions, readingInstructions),
             response_format: 'mp3'
           })
         });
@@ -456,13 +467,16 @@ function App() {
 
   // Function to preview story text in creative corner
   const previewStoryText = async () => {
+    // Use formatted text from HTML for TTS
+    const formattedText = storyHtml ? formatTextForTTS(storyHtml) : storyText;
+    
     // Process the full story at once, handling splitting behind the scenes
-    await processFullAudio(storyText);
+    await processFullAudio(formattedText);
   };
 
   // Function to process book text in book mode
   const processBookText = () => {
-    const sections = splitIntoSections(text);
+    const sections = splitIntoSections(text, htmlText);
     setAudioSections(sections);
     setError('');
   };
@@ -489,7 +503,7 @@ function App() {
           model: 'gpt-4o-mini-tts',
           input: section,
           voice: selectedVoice,
-          instructions: voiceInstructions,
+          instructions: enhanceVoiceInstructions(voiceInstructions, readingInstructions),
           response_format: 'mp3'
         })
       });
@@ -602,6 +616,8 @@ function App() {
           <CreativeCorner
             storyText={storyText}
             setStoryText={setStoryText}
+            storyHtml={storyHtml}
+            setStoryHtml={setStoryHtml}
             voiceChoice={voiceChoice}
             setVoiceChoice={setVoiceChoice}
             voiceInstructions={voiceInstructions}

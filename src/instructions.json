@@ -1,0 +1,64 @@
+﻿{
+  "reading_instructions": {
+    "comma": {
+      "description": "Short pause. Like a quick breath.",
+      "example": "She smiled, but her eyes didn’t.",
+      "how_to_read": "Pause briefly after 'smiled'."
+    },
+    "em_dash": {
+      "description": "Medium pause. Used for emphasis or shift in tone.",
+      "example": "I told you—don’t touch that.",
+      "how_to_read": "Pause before 'don’t', emphasize the interruption."
+    },
+    "ellipsis": {
+      "description": "Long, soft pause. Indicates hesitation or trailing off.",
+      "example": "I thought I was ready… but maybe not.",
+      "how_to_read": "Pause gently after 'ready', sound unsure or distant."
+    },
+    "period": {
+      "description": "Full stop. End of a sentence.",
+      "example": "That’s it. I’m done.",
+      "how_to_read": "Pause fully between sentences. Reset tone."
+    },
+    "line_break": {
+      "description": "Longest pause. Major beat or dramatic moment.",
+      "example": "He opened the door.\n\nShe was gone.",
+      "how_to_read": "Pause long before second line. Read it slowly and dramatically."
+    },
+    "exclamation": {
+      "description": "Strong or urgent tone. Emotional or loud.",
+      "example": "Run!",
+      "how_to_read": "Shout or project voice. Pause afterward."
+    },
+    "question": {
+      "description": "Rising tone. Sounds like you're asking.",
+      "example": "You really said that?",
+      "how_to_read": "Raise tone at end of sentence, then pause."
+    },
+    "italics": {
+      "description": "Soft emphasis. Internal thoughts, sarcasm, or contrast.",
+      "examples": {
+        "internal_monologue": "*I can’t do this.*",
+        "sarcasm": "Oh, *great.*",
+        "contrast": "He said *you* did it."
+      },
+      "how_to_read": "Use a more emotional, quiet, or sarcastic tone."
+    },
+    "bold": {
+      "description": "Strong emphasis.",
+      "example": "That’s **not** what I meant.",
+      "how_to_read": "Say with more force or conviction than normal tone."
+    },
+    "bold_italics_caps": {
+      "description": "Yelling, intense emotion, or dramatic breakdown.",
+      "example": "**_I SAID STOP!_**",
+      "how_to_read": "Shout or deliver with extreme urgency. Pause afterward."
+    },
+    "stretched_words": {
+      "description": "Repeated letters mean the word is stretched for emotion.",
+      "examples": ["Heeeey", "Suuuure", "Nooooo!"],
+      "how_to_read": "Recognize the normal word, then stretch it slightly. Don't spell out each letter."
+    },
+    "final_tip": "Read like a human. Pause naturally. Let emotional beats land with silence or slower pacing."
+  }
+}
