@@ -981,15 +981,115 @@ footer {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.audio-player {
+/* Embedded Audio Player */
+.embedded-audio-player {
   width: 100%;
-  margin-bottom: 15px;
 }
 
-.audio-actions {
+.player-controls {
   display: flex;
-  justify-content: center;
+  align-items: center;
   gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.play-pause-btn {
+  background: var(--primary-color);
+  border: none;
+  color: var(--text-color);
+  font-size: 24px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.play-pause-btn:hover {
+  background: var(--hover-color);
+}
+
+.time-display {
+  font-size: 14px;
+  color: var(--text-color);
+  font-family: monospace;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent-color);
+  border-radius: 4px;
+  transition: width 0.1s ease;
+}
+
+.skip-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.skip-btn {
+  background: var(--primary-color);
+  border: none;
+  color: var(--text-color);
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.skip-btn:hover {
+  background: var(--hover-color);
+}
+
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.volume-slider {
+  width: 100px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  outline: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.download-btn {
+  background: var(--accent-color);
+  border: none;
+  color: var(--bg-color);
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.download-btn:hover {
+  background: #b88a2e;
 }
 
 .control-button {

@@ -5,6 +5,7 @@ import './App.css';
 import SimpleRichEditor from './SimpleRichEditor';
 import ForestAnimations from './ForestAnimations';
 import VoiceInstructionsGuide from './VoiceInstructionsGuide';
+import EmbeddedAudioPlayer from './EmbeddedAudioPlayer';
 
 // Maximum character limit for OpenAI's text-to-speech API (hidden from user)
 const MAX_CHARS = 4096;
@@ -165,42 +166,19 @@ const CreativeCorner = ({
 
       {audioFiles && audioFiles.length > 0 && (
         <div className="audio-player-section">
-          <audio 
-            controls 
-            src={audioFiles[0]} 
-            className="audio-player" 
-            key={audioFiles[0]}
-            controlsList="nodownload"
-          ></audio>
-          <div className="audio-actions">
-            <button
-              onClick={() => {
-                const audio = document.querySelector('.audio-player');
-                audio.currentTime = Math.max(0, audio.currentTime - 10);
-              }}
-              className="control-button"
-              title="Skip back 10 seconds"
-            >
-              ⏪ -10s
-            </button>
-            <button
-              onClick={() => {
-                const audio = document.querySelector('.audio-player');
-                audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
-              }}
-              className="control-button"
-              title="Skip forward 10 seconds"
-            >
-              +10s ⏩
-            </button>
-            <a 
-              href={audioFiles[0]} 
-              download="my_story.mp3"
-              className="download-button"
-            >
-              Download Audio
-            </a>
-          </div>
+          <EmbeddedAudioPlayer 
+            audioUrl={audioFiles[0]}
+            onDownload={() => {
+              // Custom download handler if needed
+              const a = document.createElement('a');
+              a.href = audioFiles[0];
+              a.download = 'my_story.mp3';
+              a.style.display = 'none';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+            }}
+          />
         </div>
       )}
 
@@ -530,10 +508,7 @@ function App() {
         audioRef.current.play();
       }
       
-      const downloadLink = document.createElement('a');
-      downloadLink.href = audioUrl;
-      downloadLink.download = `section_${index + 1}.mp3`;
-      downloadLink.click();
+      // Let the user manually download if they want
     } catch (err) {
       setError(err.message || 'Error converting text to speech');
     } finally {
