@@ -7,6 +7,7 @@ import ForestAnimations from './ForestAnimations';
 import VoiceInstructionsGuide from './VoiceInstructionsGuide';
 import EmbeddedAudioPlayer from './EmbeddedAudioPlayer';
 import ApiKeyHelp from './ApiKeyHelp';
+import CustomRulesManager from './CustomRulesManager';
 import { formatTextForTTS, enhanceVoiceInstructions } from './formatTextForTTS';
 import readingInstructions from './instructions.json';
 
@@ -31,7 +32,8 @@ const CreativeCorner = ({
   setAudioFiles,
   onFileImport,
   onPaste,
-  isImporting
+  isImporting,
+  setShowCustomRules
 }) => {
   // Local state for controlling the visibility of the instructions guide
   const [showInstructionsGuide, setShowInstructionsGuide] = useState(false);
@@ -104,6 +106,17 @@ const CreativeCorner = ({
       {showInstructionsGuide && (
         <VoiceInstructionsGuide onSelectInstruction={handleSelectInstruction} />
       )}
+      
+      <div className="reading-rules-section">
+        <button 
+          className="manage-rules-btn"
+          onClick={() => setShowCustomRules(true)}
+          title="Manage custom reading rules"
+        >
+          ⚙️ Custom Reading Rules
+        </button>
+        <p className="rules-hint">Define how specific text patterns should be read aloud</p>
+      </div>
 
       <div className="story-text-container">
         <div className="story-header">
@@ -232,6 +245,9 @@ function App() {
   
   // State for API key help modal
   const [showApiKeyHelp, setShowApiKeyHelp] = useState(false);
+  
+  // State for custom rules manager
+  const [showCustomRules, setShowCustomRules] = useState(false);
 
   // Available voices
   const voices = [
@@ -631,6 +647,7 @@ function App() {
             onFileImport={handleFileImport}
             onPaste={handlePaste}
             isImporting={isImporting}
+            setShowCustomRules={setShowCustomRules}
           />
         ) : (
           <>
@@ -754,6 +771,12 @@ function App() {
         isOpen={showApiKeyHelp} 
         onClose={() => setShowApiKeyHelp(false)} 
       />
+      
+      {showCustomRules && (
+        <CustomRulesManager 
+          onClose={() => setShowCustomRules(false)} 
+        />
+      )}
     </div>
   );
 }

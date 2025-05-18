@@ -238,6 +238,41 @@ body::before {
   }
 }
 
+/* Reading Rules Section */
+.reading-rules-section {
+  text-align: center;
+  margin: 20px 0;
+  padding: 10px;
+}
+
+.manage-rules-btn {
+  background-color: var(--bg-secondary);
+  color: var(--text-color);
+  border: 2px solid var(--border-color);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.manage-rules-btn:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.rules-hint {
+  color: var(--text-color);
+  opacity: 0.8;
+  font-size: 14px;
+  margin-top: 8px;
+  font-style: italic;
+}
+
 /* API Key Status */
 .api-key-status {
   text-align: center;

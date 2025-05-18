@@ -5,6 +5,17 @@ export const formatTextForTTS = (htmlContent) => {
   const tempDiv = document.createElement('div');
   tempDiv.innerHTML = htmlContent;
   
+  // Get custom rules to apply special formatting
+  let customRules = [];
+  try {
+    const stored = localStorage.getItem('customTTSRules');
+    if (stored) {
+      customRules = JSON.parse(stored);
+    }
+  } catch (e) {
+    console.error('Failed to load custom rules:', e);
+  }
+  
   // Function to recursively process nodes
   const processNode = (node) => {
     if (node.nodeType === Node.TEXT_NODE) {
@@ -72,6 +83,18 @@ export const formatTextForTTS = (htmlContent) => {
   // Process the entire HTML content
   let formattedText = processNode(tempDiv);
   
+  // Apply custom rules to replace patterns in the text
+  customRules.forEach(rule => {
+    if (rule.pattern) {
+      // Escape special regex characters in the pattern
+      const escapedPattern = rule.pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      // Replace the pattern with itself to preserve it (TTS will read based on instructions)
+      // You could also wrap it in special markers if needed
+      const regex = new RegExp(escapedPattern, 'g');
+      formattedText = formattedText.replace(regex, rule.pattern);
+    }
+  });
+  
   // Clean up excessive line breaks
   formattedText = formattedText.replace(/\n{3,}/g, '\n\n');
   
@@ -85,23 +108,54 @@ export const formatTextForTTS = (htmlContent) => {
 export const enhanceVoiceInstructions = (baseInstructions, instructionsJson) => {
   const readingRules = instructionsJson.reading_instructions;
   
+  // Get custom rules from localStorage
+  let customRules = {};
+  try {
+    const stored = localStorage.getItem('customTTSRules');
+    if (stored) {
+      const customRulesList = JSON.parse(stored);
+      // Convert array to object format matching instructions.json
+      customRulesList.forEach(rule => {
+        customRules[rule.pattern] = {
+          description: rule.description || rule.name,
+          example: rule.example || '',
+          how_to_read: rule.how_to_read
+        };
+      });
+    }
+  } catch (e) {
+    console.error('Failed to load custom rules:', e);
+  }
+  
+  // Merge custom rules with default rules
+  const allRules = { ...readingRules, ...customRules };
+  
   // Create a comprehensive instruction string
   let enhancedInstructions = baseInstructions || "Read in a natural, engaging tone";
   
   // Add specific punctuation and formatting instructions
-  enhancedInstructions += `
+  enhancedInstructions += `\n\nAdditional reading guidance:`;
   
-  Additional reading guidance:
-  - For commas: ${readingRules.comma.how_to_read}
-  - For em-dashes (—): ${readingRules.em_dash.how_to_read}
-  - For ellipses (...): ${readingRules.ellipsis.how_to_read}
-  - For line breaks: ${readingRules.line_break.how_to_read}
-  - For italicized text (*text*): ${readingRules.italics.how_to_read}
-  - For bold text (**text**): ${readingRules.bold.how_to_read}
-  - For exclamations: ${readingRules.exclamation.how_to_read}
-  - For questions: ${readingRules.question.how_to_read}
-  - For stretched words (like 'nooooo'): ${readingRules.stretched_words.how_to_read}
-  ${readingRules.final_tip}`;
+  // Add default rules
+  if (allRules.comma) enhancedInstructions += `\n- For commas: ${allRules.comma.how_to_read}`;
+  if (allRules.em_dash) enhancedInstructions += `\n- For em-dashes (—): ${allRules.em_dash.how_to_read}`;
+  if (allRules.ellipsis) enhancedInstructions += `\n- For ellipses (...): ${allRules.ellipsis.how_to_read}`;
+  if (allRules.line_break) enhancedInstructions += `\n- For line breaks: ${allRules.line_break.how_to_read}`;
+  if (allRules.italics) enhancedInstructions += `\n- For italicized text (*text*): ${allRules.italics.how_to_read}`;
+  if (allRules.bold) enhancedInstructions += `\n- For bold text (**text**): ${allRules.bold.how_to_read}`;
+  if (allRules.exclamation) enhancedInstructions += `\n- For exclamations: ${allRules.exclamation.how_to_read}`;
+  if (allRules.question) enhancedInstructions += `\n- For questions: ${allRules.question.how_to_read}`;
+  if (allRules.stretched_words) enhancedInstructions += `\n- For stretched words (like 'nooooo'): ${allRules.stretched_words.how_to_read}`;
+  
+  // Add custom rules
+  Object.keys(customRules).forEach(pattern => {
+    const rule = customRules[pattern];
+    enhancedInstructions += `\n- For "${pattern}": ${rule.how_to_read}`;
+  });
+  
+  if (allRules.final_tip) {
+    enhancedInstructions += `\n${allRules.final_tip}`;
+  }
   
   return enhancedInstructions;
 };
