@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/aquietplace/static/css/main.0b674014.css",
-    "main.js": "/aquietplace/static/js/main.e99435f8.js",
+    "main.css": "/aquietplace/static/css/main.206ac9b0.css",
+    "main.js": "/aquietplace/static/js/main.edb4ce10.js",
     "index.html": "/aquietplace/index.html",
-    "main.0b674014.css.map": "/aquietplace/static/css/main.0b674014.css.map",
-    "main.e99435f8.js.map": "/aquietplace/static/js/main.e99435f8.js.map"
+    "main.206ac9b0.css.map": "/aquietplace/static/css/main.206ac9b0.css.map",
+    "main.edb4ce10.js.map": "/aquietplace/static/js/main.edb4ce10.js.map"
   },
   "entrypoints": [
-    "static/css/main.0b674014.css",
-    "static/js/main.e99435f8.js"
+    "static/css/main.206ac9b0.css",
+    "static/js/main.edb4ce10.js"
   ]
 }
