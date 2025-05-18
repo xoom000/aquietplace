@@ -136,28 +136,73 @@ const CreativeCorner = ({
         </div>
       </div>
 
-      {audioFiles && audioFiles.length > 0 && (
-        <div className="audio-preview">
-          <h3>Your Story Audio</h3>
-          <audio controls src={audioFiles[0]} className="audio-player"></audio>
-        </div>
-      )}
-
       <div className="button-group">
         <button 
           className="preview-button"
           onClick={previewStoryText}
           disabled={isProcessing || !storyText.trim() || !savedApiKey}
         >
-          {isProcessing ? 'Reading Your Story...' : 'Read My Story Aloud'}
+          {isProcessing ? 'Creating Audio...' : 
+           audioFiles.length > 0 ? 'Regenerate Audio' : 'Read My Story Aloud'}
         </button>
         <button 
           className="reset-button"
-          onClick={() => setStoryText("")}
+          onClick={() => {
+            setStoryText("");
+            setAudioFiles([]);
+          }}
         >
           Clear Story
         </button>
       </div>
+
+      {isProcessing && (
+        <div className="processing-status">
+          <div className="loading-animation"></div>
+          <p>Converting your story to audio...</p>
+        </div>
+      )}
+
+      {audioFiles && audioFiles.length > 0 && (
+        <div className="audio-player-section">
+          <audio 
+            controls 
+            src={audioFiles[0]} 
+            className="audio-player" 
+            key={audioFiles[0]}
+            controlsList="nodownload"
+          ></audio>
+          <div className="audio-actions">
+            <button
+              onClick={() => {
+                const audio = document.querySelector('.audio-player');
+                audio.currentTime = Math.max(0, audio.currentTime - 10);
+              }}
+              className="control-button"
+              title="Skip back 10 seconds"
+            >
+              ⏪ -10s
+            </button>
+            <button
+              onClick={() => {
+                const audio = document.querySelector('.audio-player');
+                audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+              }}
+              className="control-button"
+              title="Skip forward 10 seconds"
+            >
+              +10s ⏩
+            </button>
+            <a 
+              href={audioFiles[0]} 
+              download="my_story.mp3"
+              className="download-button"
+            >
+              Download Audio
+            </a>
+          </div>
+        </div>
+      )}
 
       <div className="inspiration-box">
         <h3>Writer's Corner</h3>
@@ -409,38 +454,15 @@ function App() {
           // Only one section, no need to combine
           const audioUrl = URL.createObjectURL(audioBlobs[0]);
           setAudioFiles([audioUrl]);
-          
-          if (audioRef.current) {
-            audioRef.current.src = audioUrl;
-            audioRef.current.play();
-          }
-          
-          // Create download link
-          const downloadLink = document.createElement('a');
-          downloadLink.href = audioUrl;
-          downloadLink.download = 'your_complete_story.mp3';
-          downloadLink.click();
         } else {
           // Multiple sections - in a real app you'd combine them server-side
           // For this demo we'll use the first one and explain the limitation
           setCombiningAudio(true);
           
-          // Simulate combining audio files
+          // Simulate combining audio files (in production, combine server-side)
           setTimeout(() => {
             const audioUrl = URL.createObjectURL(audioBlobs[0]);
             setAudioFiles([audioUrl]);
-            
-            if (audioRef.current) {
-              audioRef.current.src = audioUrl;
-              audioRef.current.play();
-            }
-            
-            // Create download link
-            const downloadLink = document.createElement('a');
-            downloadLink.href = audioUrl;
-            downloadLink.download = 'your_story_part1.mp3'; // Would be complete file in real implementation
-            downloadLink.click();
-            
             setCombiningAudio(false);
           }, 1500);
           
