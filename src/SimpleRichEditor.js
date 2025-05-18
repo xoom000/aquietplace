@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 // No need to import CSS as styles are included in App.css now
 
-const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = false, onCustomPaste }) => {
+const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = false, onCustomPaste, initialValue }) => {
   const editorRef = useRef(null);
   const [charCount, setCharCount] = useState(0);
   const [wordCount, setWordCount] = useState(0);
@@ -11,6 +11,10 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
   // Handle initial content and focus
   useEffect(() => {
     if (editorRef.current) {
+      if (initialValue) {
+        editorRef.current.innerText = initialValue;
+        updateCounts();
+      }
       editorRef.current.focus();
     }
   }, []);

@@ -122,15 +122,16 @@ const CreativeCorner = ({
             </button>
           </div>
         </div>
-        <textarea
-          id="story-text"
-          value={storyText}
-          onChange={(e) => setStoryText(e.target.value)}
-          onPaste={(e) => onPaste(e, 'creative')}
-          rows={10}
-          className="story-textarea"
+        <SimpleRichEditor 
+          onChange={(html, plainText) => {
+            setStoryText(plainText);
+          }}
           placeholder="Write or paste your story here (you can paste directly from Google Docs)..."
-        ></textarea>
+          maxChars={MAX_CHARS * 5} // Allow longer stories in Creative Corner
+          hideCharCount={false}
+          onCustomPaste={(e) => onPaste(e, 'creative')}
+          initialValue={storyText}
+        />
         <div className="char-hint">
           Write as much as you want - we'll take care of the rest
         </div>
