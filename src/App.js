@@ -19,7 +19,7 @@ const CreativeCorner = ({
   voiceInstructions,
   setVoiceInstructions,
   isProcessing,
-  savedApiKey,
+  apiKey,
   previewStoryText,
   voices,
   audioFiles,
@@ -141,7 +141,7 @@ const CreativeCorner = ({
         <button 
           className="preview-button"
           onClick={previewStoryText}
-          disabled={isProcessing || !storyText.trim() || !savedApiKey}
+          disabled={isProcessing || !storyText.trim() || !apiKey}
         >
           {isProcessing ? 'Creating Audio...' : 
            audioFiles.length > 0 ? 'Regenerate Audio' : 'Read My Story Aloud'}
@@ -198,15 +198,16 @@ function App() {
   const [text, setText] = useState('');
   const [htmlText, setHtmlText] = useState(''); // For storing HTML content from editor
   const [audioSections, setAudioSections] = useState([]); // Renamed from chunks
-  const [apiKey, setApiKey] = useState('');
   const [selectedVoice, setSelectedVoice] = useState('alloy');
   const [voiceInstructions, setVoiceInstructions] = useState('Read in a natural, engaging tone');
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentSection, setCurrentSection] = useState(null); // Renamed from currentChunk
   const [error, setError] = useState('');
-  const [savedApiKey, setSavedApiKey] = useState('');
   const [isProcessingFull, setIsProcessingFull] = useState(false);
   const audioRef = useRef(null);
+  
+  // Get API key from environment variable
+  const apiKey = process.env.REACT_APP_OPENAI_API_KEY;
   
   // State variables for creative corner (formerly sandbox mode)
   const [creativeMode, setCreativeMode] = useState(true); // Default to creative mode
@@ -232,28 +233,10 @@ function App() {
     { id: 'sage', name: 'Sage' }
   ];
 
-  // Load API key from localStorage on component mount
+  // Clear any stored API keys from localStorage (cleanup)
   useEffect(() => {
-    const savedKey = localStorage.getItem('openai_api_key');
-    if (savedKey) {
-      setApiKey(savedKey);
-      setSavedApiKey(savedKey);
-    }
-  }, []);
-
-  // Function to save API key to localStorage
-  const saveApiKey = () => {
-    localStorage.setItem('openai_api_key', apiKey);
-    setSavedApiKey(apiKey);
-    setError('');
-  };
-
-  // Function to clear API key from form and localStorage
-  const clearApiKey = () => {
     localStorage.removeItem('openai_api_key');
-    setApiKey('');
-    setSavedApiKey('');
-  };
+  }, []);
 
   // Function to handle editor changes
   const handleEditorChange = (html, plainText) => {
@@ -380,8 +363,8 @@ function App() {
 
   // Create a complete audio file from multiple sections
   const processFullAudio = async (inputText) => {
-    if (!savedApiKey) {
-      setError('Please save your OpenAI API key first');
+    if (!apiKey) {
+      setError('OpenAI API key not found. Please set REACT_APP_OPENAI_API_KEY in .env file');
       return;
     }
     
@@ -405,7 +388,7 @@ function App() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${savedApiKey}`
+            'Authorization': `Bearer ${apiKey}`
           },
           body: JSON.stringify({
             model: 'gpt-4o-mini-tts',
@@ -470,8 +453,8 @@ function App() {
 
   // Convert a single section to speech in book mode
   const convertSectionToSpeech = async (section, index) => {
-    if (!savedApiKey) {
-      setError('Please save your OpenAI API key first');
+    if (!apiKey) {
+      setError('OpenAI API key not found. Please set REACT_APP_OPENAI_API_KEY in .env file');
       return;
     }
     
@@ -484,7 +467,7 @@ function App() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${savedApiKey}`
+          'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
           model: 'gpt-4o-mini-tts',
@@ -540,20 +523,7 @@ function App() {
       </header>
 
       <main>
-        <section className="setup-section">
-          <h2>Quick Setup</h2>
-          <div className="input-group">
-            <input
-              type="password"
-              placeholder="Enter your OpenAI API key"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-            />
-            <button onClick={saveApiKey} disabled={!apiKey}>Save Key</button>
-            <button onClick={clearApiKey} disabled={!savedApiKey}>Clear Key</button>
-          </div>
-          {savedApiKey && <p className="success-message">API key is saved</p>}
-        </section>
+        {/* Removed API key UI - now using environment variable */}
 
         {error && <div className="error-message">{error}</div>}
 
@@ -566,7 +536,7 @@ function App() {
             voiceInstructions={voiceInstructions}
             setVoiceInstructions={setVoiceInstructions}
             isProcessing={isProcessingFull || combiningAudio}
-            savedApiKey={savedApiKey}
+            apiKey={apiKey}
             previewStoryText={previewStoryText}
             voices={voices}
             audioFiles={audioFiles}
