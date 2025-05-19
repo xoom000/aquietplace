@@ -8,6 +8,7 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
   const [wordCount, setWordCount] = useState(0);
   const [isToolbarVisible, setIsToolbarVisible] = useState(true);
   const updateTimeoutRef = useRef(null);
+  const [isLargeContent, setIsLargeContent] = useState(false);
 
   // Handle initial content and focus
   useEffect(() => {
@@ -34,11 +35,20 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
   const updateCounts = useCallback(() => {
     if (editorRef.current) {
       const text = editorRef.current.innerText || '';
-      setCharCount(text.length);
+      const textLength = text.length;
       
-      // Count words
-      const words = text.trim().split(/\s+/);
-      setWordCount(words.length > 0 && words[0] !== '' ? words.length : 0);
+      // Check if content is large (over 50k characters)
+      setIsLargeContent(textLength > 50000);
+      
+      setCharCount(textLength);
+      
+      // Only count words for smaller content to avoid performance issues
+      if (textLength < 50000) {
+        const words = text.trim().split(/\s+/);
+        setWordCount(words.length > 0 && words[0] !== '' ? words.length : 0);
+      } else {
+        setWordCount(0); // Skip word count for large content
+      }
       
       // Pass content to parent component
       if (onChange) {
@@ -61,7 +71,7 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
     // Set a new timeout
     updateTimeoutRef.current = setTimeout(() => {
       updateCounts();
-    }, 100); // 100ms delay
+    }, 300); // Increased delay for better performance
   }, [updateCounts]);
 
   // Format functions
@@ -73,6 +83,37 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
 
   // Handle keyboard shortcuts
   const handleKeyDown = (e) => {
+    // Handle Select All + Delete for large content
+    if (e.ctrlKey && e.key === 'a') {
+      // When Select All is pressed with large content, prepare for potential delete
+      if (isLargeContent) {
+        // Set a flag that we're in select-all mode
+        editorRef.current.dataset.selectAll = 'true';
+      }
+    }
+    
+    // Handle delete/backspace with large content
+    if ((e.key === 'Delete' || e.key === 'Backspace') && isLargeContent) {
+      const selection = window.getSelection();
+      const selectedText = selection.toString();
+      
+      // If a large amount is selected (more than 10k chars), handle specially
+      if (selectedText.length > 10000 || editorRef.current.dataset.selectAll === 'true') {
+        e.preventDefault();
+        
+        // Use a more efficient method for large deletions
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        
+        // Clear the select-all flag
+        delete editorRef.current.dataset.selectAll;
+        
+        // Immediate update after large deletion
+        setTimeout(() => updateCounts(), 0);
+        return;
+      }
+    }
+    
     // Bold: Ctrl+B
     if (e.ctrlKey && e.key === 'b') {
       e.preventDefault();
@@ -189,7 +230,12 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
               Characters: {charCount}{maxChars ? ` / ${maxChars}` : ''}
             </span>
           )}
-          <span>Words: {wordCount}</span>
+          <span>Words: {wordCount > 0 ? wordCount : (isLargeContent ? '(large content)' : '0')}</span>
+          {isLargeContent && (
+            <span style={{ marginLeft: '10px', color: '#ff9800' }}>
+              ⚠️ Large content mode
+            </span>
+          )}
         </div>
         <div className="editor-actions">
           <button 
