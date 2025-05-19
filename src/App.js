@@ -127,7 +127,7 @@ const CreativeCorner = ({
               ref={fileInputRef}
               onChange={(e) => onFileImport(e, 'creative')}
               style={{ display: 'none' }}
-              accept=".txt,.md,.doc,.docx,.rtf"
+              accept=".txt,.md,.doc,.docx,.rtf,text/plain,text/markdown,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/rtf"
             />
             <button 
               onClick={triggerFileInput}
@@ -666,7 +666,7 @@ function App() {
                     id="book-file-input"
                     style={{ display: 'none' }}
                     onChange={(e) => handleFileImport(e, 'book')}
-                    accept=".txt,.md,.doc,.docx,.rtf"
+                    accept=".txt,.md,.doc,.docx,.rtf,text/plain,text/markdown,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/rtf"
                   />
                   <button 
                     onClick={() => document.getElementById('book-file-input').click()}
