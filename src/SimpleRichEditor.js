@@ -73,20 +73,24 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
       // Let the custom handler decide whether to preventDefault
       onCustomPaste(e);
       
-      // If the default was already prevented, return early
+      // If the default was already prevented, return early or continue based on handler
       if (e.defaultPrevented) {
         updateCounts();
         return;
       }
     }
     
-    e.preventDefault();
-    
-    // Get text from clipboard
-    const text = e.clipboardData.getData('text/plain');
-    
-    // Insert text at cursor position
-    document.execCommand('insertText', false, text);
+    // Only prevent default if we're stripping formatting ourselves
+    // If a custom handler was provided and didn't prevent default, allow normal paste
+    if (!onCustomPaste) {
+      e.preventDefault();
+      
+      // Get text from clipboard
+      const text = e.clipboardData.getData('text/plain');
+      
+      // Insert text at cursor position
+      document.execCommand('insertText', false, text);
+    }
     
     updateCounts();
   };

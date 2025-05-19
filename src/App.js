@@ -684,6 +684,7 @@ function App() {
                 maxChars={MAX_CHARS}
                 hideCharCount={true}
                 onCustomPaste={(e) => handlePaste(e, 'book')}
+                initialValue={text}
               />
               <button 
                 className="process-button" 
