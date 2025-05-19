@@ -11,13 +11,14 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
   // Handle initial content and focus
   useEffect(() => {
     if (editorRef.current) {
-      if (initialValue) {
-        editorRef.current.innerText = initialValue;
+      if (initialValue !== undefined) {
+        editorRef.current.innerText = initialValue || '';
         updateCounts();
       }
       editorRef.current.focus();
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialValue]);
 
   // Update character and word count
   const updateCounts = () => {

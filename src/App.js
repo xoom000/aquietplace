@@ -300,6 +300,7 @@ function App() {
         // Update the appropriate text field based on mode
         if (targetMode === 'creative') {
           setStoryText(content);
+          setStoryHtml(content);
         } else {
           setText(content);
           setHtmlText(content);
@@ -330,19 +331,18 @@ function App() {
     
     if (!pastedText) return;
     
-    // If the text is long, it's likely a copy from somewhere else (like Google Docs)
-    if (pastedText.length > 50) {
-      // Update the appropriate text field based on mode
-      if (targetMode === 'creative') {
-        setStoryText(pastedText);
-      } else {
-        setText(pastedText);
-        setHtmlText(pastedText);
-      }
-      
-      // Prevent the default paste behavior to avoid double-pasting
-      event.preventDefault();
+    // Always handle the paste for any text content
+    // Update the appropriate text field based on mode
+    if (targetMode === 'creative') {
+      setStoryText(pastedText);
+      setStoryHtml(pastedText);
+    } else {
+      setText(pastedText);
+      setHtmlText(pastedText);
     }
+    
+    // Prevent the default paste behavior to avoid double-pasting
+    event.preventDefault();
   };
 
   // Function to split text into sections based on character limit (hidden from user)
