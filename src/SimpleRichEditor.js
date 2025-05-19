@@ -9,12 +9,23 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
   const [isToolbarVisible, setIsToolbarVisible] = useState(true);
   const updateTimeoutRef = useRef(null);
   const [isLargeContent, setIsLargeContent] = useState(false);
+  const [useTextarea, setUseTextarea] = useState(false);
 
   // Handle initial content and focus
   useEffect(() => {
+    // Check initial content size
+    if (initialValue && initialValue.length > 50000) {
+      setIsLargeContent(true);
+      setUseTextarea(true);
+    }
+    
     if (editorRef.current) {
       if (initialValue !== undefined) {
-        editorRef.current.innerText = initialValue || '';
+        if (useTextarea) {
+          editorRef.current.value = initialValue || '';
+        } else {
+          editorRef.current.innerText = initialValue || '';
+        }
         updateCounts(); // Keep immediate update for initial value
       }
       editorRef.current.focus();
@@ -34,11 +45,19 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
   // Update character and word count
   const updateCounts = useCallback(() => {
     if (editorRef.current) {
-      const text = editorRef.current.innerText || '';
+      const text = useTextarea 
+        ? editorRef.current.value || ''
+        : editorRef.current.innerText || '';
       const textLength = text.length;
       
       // Check if content is large (over 50k characters)
+      const wasLargeContent = isLargeContent;
       setIsLargeContent(textLength > 50000);
+      
+      // Switch to textarea for large content
+      if (textLength > 50000 && !wasLargeContent && !useTextarea) {
+        setUseTextarea(true);
+      }
       
       setCharCount(textLength);
       
@@ -52,14 +71,13 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
       
       // Pass content to parent component
       if (onChange) {
-        // Get HTML content
-        const htmlContent = editorRef.current.innerHTML;
-        // Get plain text
+        // For textarea, use plain text for both HTML and text
+        const htmlContent = useTextarea ? text : editorRef.current.innerHTML;
         const plainText = text;
         onChange(htmlContent, plainText);
       }
     }
-  }, [onChange]);
+  }, [onChange, isLargeContent, useTextarea]);
   
   // Debounced version for performance with large texts
   const debouncedUpdateCounts = useCallback(() => {
@@ -83,6 +101,11 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
 
   // Handle keyboard shortcuts
   const handleKeyDown = (e) => {
+    // If using textarea, don't handle special formatting shortcuts
+    if (useTextarea) {
+      return;
+    }
+    
     // Handle Select All + Delete for large content
     if (e.ctrlKey && e.key === 'a') {
       // When Select All is pressed with large content, prepare for potential delete
@@ -133,6 +156,15 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
 
   // Handle pasting to strip unwanted formatting
   const handlePaste = (e) => {
+    // If using textarea, just let the default paste work
+    if (useTextarea) {
+      if (onCustomPaste) {
+        onCustomPaste(e);
+      }
+      debouncedUpdateCounts();
+      return;
+    }
+    
     // If there's a custom paste handler provided, call it first
     if (onCustomPaste) {
       // Let the custom handler decide whether to preventDefault
@@ -168,7 +200,11 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
   // Clear all text
   const clearText = () => {
     if (editorRef.current) {
-      editorRef.current.innerHTML = '';
+      if (useTextarea) {
+        editorRef.current.value = '';
+      } else {
+        editorRef.current.innerHTML = '';
+      }
       updateCounts(); // Keep immediate update for clear action
     }
   };
@@ -184,7 +220,8 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
 
   return (
     <div className="simple-editor-container">
-      <div className={`editor-toolbar ${isToolbarVisible ? 'visible' : ''}`}>
+      {!useTextarea && (
+        <div className={`editor-toolbar ${isToolbarVisible ? 'visible' : ''}`}>
         <button type="button" onClick={() => formatText('bold')} title="Bold (Ctrl+B)">
           <strong>B</strong>
         </button>
@@ -212,16 +249,39 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
           Text
         </button>
       </div>
+      )}
       
-      <div 
-        className="editor-content" 
-        ref={editorRef}
-        contentEditable="true"
-        onInput={debouncedUpdateCounts}
-        onKeyDown={handleKeyDown}
-        onPaste={handlePaste}
-        data-placeholder={placeholder || "Begin your story here..."}
-      />
+      {useTextarea ? (
+        <textarea
+          className="editor-content editor-textarea"
+          ref={editorRef}
+          onInput={debouncedUpdateCounts}
+          onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
+          placeholder={placeholder || "Begin your story here..."}
+          style={{
+            width: '100%',
+            minHeight: '300px',
+            resize: 'vertical',
+            fontFamily: 'inherit',
+            fontSize: 'inherit',
+            lineHeight: 'inherit',
+            padding: '10px',
+            border: '1px solid #ddd',
+            borderRadius: '4px'
+          }}
+        />
+      ) : (
+        <div 
+          className="editor-content" 
+          ref={editorRef}
+          contentEditable="true"
+          onInput={debouncedUpdateCounts}
+          onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
+          data-placeholder={placeholder || "Begin your story here..."}
+        />
+      )}
       
       <div className="editor-footer">
         <div className="count-info">
