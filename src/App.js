@@ -10,6 +10,7 @@ import ApiKeyHelp from './ApiKeyHelp';
 import ReadingRulesDisplay from './ReadingRulesDisplay';
 import { formatTextForTTS, enhanceVoiceInstructions } from './formatTextForTTS';
 import readingInstructions from './instructions.json';
+import mammoth from 'mammoth';
 
 // Maximum character limit for OpenAI's text-to-speech API (hidden from user)
 const MAX_CHARS = 4096;
@@ -127,13 +128,13 @@ const CreativeCorner = ({
               ref={fileInputRef}
               onChange={(e) => onFileImport(e, 'creative')}
               style={{ display: 'none' }}
-              accept=".txt,.md,text/plain,text/markdown"
+              accept=".txt,.md,.docx,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             />
             <button 
               onClick={triggerFileInput}
               className="import-button"
               disabled={isImporting}
-              title="Import story from a text file (TXT, MD only - use copy/paste for Word docs)"
+              title="Import story from a file (TXT, MD, DOCX)"
             >
               {isImporting ? 'Importing...' : 'Import File'}
             </button>
@@ -284,59 +285,57 @@ function App() {
   };
   
   // Function to handle local file import
-  const handleFileImport = (event, targetMode) => {
+  const handleFileImport = async (event, targetMode) => {
     const file = event.target.files[0];
     if (!file) return;
     
     const fileExtension = file.name.split('.').pop().toLowerCase();
     
-    // For now, only handle plain text files
-    // DOCX files are binary and need special libraries to parse
-    if (fileExtension === 'docx' || fileExtension === 'doc') {
-      setError('DOC/DOCX files cannot be directly imported. Please save as .txt or copy/paste from Word.');
-      setIsImporting(false);
-      event.target.value = null;
-      return;
-    }
-    
     setIsImporting(true);
     setError('');
     
-    const reader = new FileReader();
-    
-    reader.onload = (e) => {
-      try {
-        const content = e.target.result;
-        
-        // Check if content looks like binary data (DOCX mistakenly imported)
-        if (content.includes('�') || content.startsWith('PK')) {
-          setError('This appears to be a binary file. Please save as .txt or copy/paste the content.');
-          setIsImporting(false);
-          return;
-        }
-        
-        // Update the appropriate text field based on mode
-        if (targetMode === 'creative') {
-          setStoryText(content);
-          setStoryHtml(content);
-        } else {
-          setText(content);
-          setHtmlText(content);
-        }
-        
+    try {
+      let content = '';
+      
+      // Handle DOCX files with mammoth
+      if (fileExtension === 'docx') {
+        const arrayBuffer = await file.arrayBuffer();
+        const result = await mammoth.extractRawText({ arrayBuffer });
+        content = result.value;
+      } 
+      // Handle DOC files (mammoth doesn't support these)
+      else if (fileExtension === 'doc') {
+        setError('DOC files are not supported. Please save as DOCX or TXT.');
         setIsImporting(false);
-      } catch (err) {
-        setError('Failed to import file: ' + err.message);
-        setIsImporting(false);
+        event.target.value = null;
+        return;
       }
-    };
-    
-    reader.onerror = () => {
-      setError('Failed to read file. Please try a .txt file instead.');
+      // Handle plain text files
+      else {
+        content = await file.text();
+      }
+      
+      // Check if we got any content
+      if (!content || content.trim() === '') {
+        setError('No readable text found in the file.');
+        setIsImporting(false);
+        return;
+      }
+      
+      // Update the appropriate text field based on mode
+      if (targetMode === 'creative') {
+        setStoryText(content);
+        setStoryHtml(content);
+      } else {
+        setText(content);
+        setHtmlText(content);
+      }
+      
       setIsImporting(false);
-    };
-    
-    reader.readAsText(file);
+    } catch (err) {
+      setError(`Failed to import file: ${err.message}`);
+      setIsImporting(false);
+    }
     
     // Reset the file input
     event.target.value = null;
@@ -684,13 +683,13 @@ function App() {
                     id="book-file-input"
                     style={{ display: 'none' }}
                     onChange={(e) => handleFileImport(e, 'book')}
-                    accept=".txt,.md,text/plain,text/markdown"
+                    accept=".txt,.md,.docx,text/plain,text/markdown,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                   />
                   <button 
                     onClick={() => document.getElementById('book-file-input').click()}
                     className="import-button"
                     disabled={isImporting}
-                    title="Import manuscript from a text file (TXT, MD only - use copy/paste for Word docs)"
+                    title="Import manuscript from a file (TXT, MD, DOCX)"
                   >
                     {isImporting ? 'Importing...' : 'Import File'}
                   </button>
