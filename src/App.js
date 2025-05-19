@@ -127,13 +127,13 @@ const CreativeCorner = ({
               ref={fileInputRef}
               onChange={(e) => onFileImport(e, 'creative')}
               style={{ display: 'none' }}
-              accept=".txt,.md,.doc,.docx,.rtf,text/plain,text/markdown,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/rtf"
+              accept=".txt,.md,text/plain,text/markdown"
             />
             <button 
               onClick={triggerFileInput}
               className="import-button"
               disabled={isImporting}
-              title="Import story from a text file (TXT, DOC, DOCX, RTF, MD)"
+              title="Import story from a text file (TXT, MD only - use copy/paste for Word docs)"
             >
               {isImporting ? 'Importing...' : 'Import File'}
             </button>
@@ -288,6 +288,17 @@ function App() {
     const file = event.target.files[0];
     if (!file) return;
     
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    
+    // For now, only handle plain text files
+    // DOCX files are binary and need special libraries to parse
+    if (fileExtension === 'docx' || fileExtension === 'doc') {
+      setError('DOC/DOCX files cannot be directly imported. Please save as .txt or copy/paste from Word.');
+      setIsImporting(false);
+      event.target.value = null;
+      return;
+    }
+    
     setIsImporting(true);
     setError('');
     
@@ -296,6 +307,13 @@ function App() {
     reader.onload = (e) => {
       try {
         const content = e.target.result;
+        
+        // Check if content looks like binary data (DOCX mistakenly imported)
+        if (content.includes('�') || content.startsWith('PK')) {
+          setError('This appears to be a binary file. Please save as .txt or copy/paste the content.');
+          setIsImporting(false);
+          return;
+        }
         
         // Update the appropriate text field based on mode
         if (targetMode === 'creative') {
@@ -314,7 +332,7 @@ function App() {
     };
     
     reader.onerror = () => {
-      setError('Failed to read file');
+      setError('Failed to read file. Please try a .txt file instead.');
       setIsImporting(false);
     };
     
@@ -666,13 +684,13 @@ function App() {
                     id="book-file-input"
                     style={{ display: 'none' }}
                     onChange={(e) => handleFileImport(e, 'book')}
-                    accept=".txt,.md,.doc,.docx,.rtf,text/plain,text/markdown,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/rtf"
+                    accept=".txt,.md,text/plain,text/markdown"
                   />
                   <button 
                     onClick={() => document.getElementById('book-file-input').click()}
                     className="import-button"
                     disabled={isImporting}
-                    title="Import manuscript from a text file (TXT, DOC, DOCX, RTF, MD)"
+                    title="Import manuscript from a text file (TXT, MD only - use copy/paste for Word docs)"
                   >
                     {isImporting ? 'Importing...' : 'Import File'}
                   </button>
