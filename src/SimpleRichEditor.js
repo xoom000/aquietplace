@@ -1,5 +1,5 @@
 // SimpleRichEditor.js - Simplified for writers
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 // No need to import CSS as styles are included in App.css now
 
 const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = false, onCustomPaste, initialValue }) => {
@@ -7,21 +7,31 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
   const [charCount, setCharCount] = useState(0);
   const [wordCount, setWordCount] = useState(0);
   const [isToolbarVisible, setIsToolbarVisible] = useState(true);
+  const updateTimeoutRef = useRef(null);
 
   // Handle initial content and focus
   useEffect(() => {
     if (editorRef.current) {
       if (initialValue !== undefined) {
         editorRef.current.innerText = initialValue || '';
-        updateCounts();
+        updateCounts(); // Keep immediate update for initial value
       }
       editorRef.current.focus();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValue]);
+  
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Update character and word count
-  const updateCounts = () => {
+  const updateCounts = useCallback(() => {
     if (editorRef.current) {
       const text = editorRef.current.innerText || '';
       setCharCount(text.length);
@@ -39,13 +49,26 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
         onChange(htmlContent, plainText);
       }
     }
-  };
+  }, [onChange]);
+  
+  // Debounced version for performance with large texts
+  const debouncedUpdateCounts = useCallback(() => {
+    // Clear any existing timeout
+    if (updateTimeoutRef.current) {
+      clearTimeout(updateTimeoutRef.current);
+    }
+    
+    // Set a new timeout
+    updateTimeoutRef.current = setTimeout(() => {
+      updateCounts();
+    }, 100); // 100ms delay
+  }, [updateCounts]);
 
   // Format functions
   const formatText = (command, value = null) => {
     document.execCommand(command, false, value);
     editorRef.current.focus();
-    updateCounts();
+    debouncedUpdateCounts();
   };
 
   // Handle keyboard shortcuts
@@ -76,7 +99,7 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
       
       // If the default was already prevented, return early or continue based on handler
       if (e.defaultPrevented) {
-        updateCounts();
+        debouncedUpdateCounts();
         return;
       }
     }
@@ -93,7 +116,7 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
       document.execCommand('insertText', false, text);
     }
     
-    updateCounts();
+    debouncedUpdateCounts();
   };
 
   // Toggle toolbar visibility
@@ -105,7 +128,7 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
   const clearText = () => {
     if (editorRef.current) {
       editorRef.current.innerHTML = '';
-      updateCounts();
+      updateCounts(); // Keep immediate update for clear action
     }
   };
 
@@ -114,7 +137,7 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
     if (editorRef.current) {
       const plainText = editorRef.current.innerText || '';
       editorRef.current.innerHTML = plainText;
-      updateCounts();
+      updateCounts(); // Keep immediate update for convert action
     }
   };
 
@@ -153,7 +176,7 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
         className="editor-content" 
         ref={editorRef}
         contentEditable="true"
-        onInput={updateCounts}
+        onInput={debouncedUpdateCounts}
         onKeyDown={handleKeyDown}
         onPaste={handlePaste}
         data-placeholder={placeholder || "Begin your story here..."}
