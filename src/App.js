@@ -438,16 +438,26 @@ function App() {
     }
   }, []);
   
-  // Update cost estimate when text changes
+  // Update cost estimate when text or model changes
   useEffect(() => {
-    if (creativeMode) {
-      const formattedText = storyHtml ? formatTextForTTS(storyHtml) : storyText;
-      updateCostEstimate(formattedText);
-    } else {
-      const formattedText = htmlText ? formatTextForTTS(htmlText) : text;
-      updateCostEstimate(formattedText);
-    }
-  }, [creativeMode, storyText, storyHtml, text, htmlText]);
+    // Define the function inside the effect to avoid dependency issues
+    const updateCurrentTextCost = () => {
+      if (creativeMode) {
+        const formattedText = storyHtml ? formatTextForTTS(storyHtml) : storyText;
+        const estimate = calculateCost(formattedText, ttsModel);
+        setCostEstimate(estimate);
+      } else {
+        const formattedText = htmlText ? formatTextForTTS(htmlText) : text;
+        const estimate = calculateCost(formattedText, ttsModel);
+        setCostEstimate(estimate);
+      }
+    };
+    
+    // Call the function to update cost
+    updateCurrentTextCost();
+    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [creativeMode, storyText, storyHtml, text, htmlText, ttsModel]);
 
   // Function to handle editor changes
   const handleEditorChange = (html, plainText) => {
@@ -704,12 +714,7 @@ function App() {
     }
   };
 
-  // Update cost estimate in real-time as user types
-  const updateCostEstimate = (text) => {
-    const formattedText = text ? formatTextForTTS(text) : '';
-    const estimate = calculateCost(formattedText, ttsModel);
-    setCostEstimate(estimate);
-  };
+  // Note: Cost estimation is now handled directly in the useEffect
 
   // Function to preview story text in creative corner
   const previewStoryText = async () => {
