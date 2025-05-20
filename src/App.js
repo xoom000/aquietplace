@@ -734,7 +734,7 @@ function App() {
       <main>
         {!apiKey && (
           <div className="api-key-bar">
-            <label htmlFor="apiKeyInput">
+            <label htmlFor="apiKeyInput" id="apiKeyLabel">
               OpenAI API Key Required:
             </label>
             <form className="api-key-controls" onSubmit={(e) => {
@@ -746,6 +746,7 @@ function App() {
               <input 
                 type="text" 
                 id="apiKeyUsername" 
+                name="apiKeyUsername"
                 autoComplete="username"
                 value="openai-api-key"
                 readOnly
@@ -754,6 +755,7 @@ function App() {
               />
               <input
                 id="apiKeyInput"
+                name="apiKeyInput"
                 type="password"
                 autoComplete="new-password"
                 placeholder="Enter your OpenAI API key"
