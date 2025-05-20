@@ -24,7 +24,7 @@ const PRICING = {
 
 // Function to calculate estimated cost based on character count and model
 const calculateCost = (text, model = 'gpt-4o-mini-tts') => {
-  if (!text) return 0;
+  if (!text) return { charCount: 0, cost: '0.0000', formattedCost: '$0.00' };
   
   // Get character count
   const charCount = text.length;
@@ -888,7 +888,7 @@ function App() {
                         <h3>Section {index + 1}</h3>
                         <div className="section-details">
                           <span className="section-cost">
-                            ~{calculateCost(section).formattedCost} • {section.length.toLocaleString()} chars
+                            ~{calculateCost(section) && calculateCost(section).formattedCost ? calculateCost(section).formattedCost : '$0.00'} • {section ? section.length.toLocaleString() : '0'} chars
                           </span>
                           <button
                             className="listen-button"
