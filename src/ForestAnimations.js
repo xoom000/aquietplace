@@ -5,6 +5,9 @@ const ForestAnimations = () => {
   // Create falling leaves
   useEffect(() => {
     const createLeaves = () => {
+      if (document.querySelector('.falling-leaves')) {
+        return; // Already exists, skip
+      }
       const leavesContainer = document.createElement('div');
       leavesContainer.className = 'falling-leaves';
       document.body.appendChild(leavesContainer);
@@ -37,6 +40,9 @@ const ForestAnimations = () => {
     
     // Create fireflies
     const createFireflies = () => {
+      if (document.querySelector('.fireflies')) {
+        return; // Already exists, skip
+      }
       const firefliesContainer = document.createElement('div');
       firefliesContainer.className = 'fireflies';
       document.body.appendChild(firefliesContainer);
@@ -86,6 +92,9 @@ const ForestAnimations = () => {
     
     // Create forest animal silhouettes
     const createForestAnimals = () => {
+      if (document.querySelector('.animals')) {
+        return; // Already exists, skip
+      }
       const animalsContainer = document.createElement('div');
       animalsContainer.className = 'animals';
       document.body.appendChild(animalsContainer);
@@ -108,6 +117,9 @@ const ForestAnimations = () => {
     
     // Add ambient light
     const createAmbientLight = () => {
+      if (document.querySelector('.ambient-light')) {
+        return; // Already exists, skip
+      }
       const ambientLight = document.createElement('div');
       ambientLight.className = 'ambient-light';
       document.body.appendChild(ambientLight);
