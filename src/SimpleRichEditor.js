@@ -228,6 +228,27 @@ const SimpleRichEditor = ({
       updateCounts(); // Keep immediate update for clear action
     }
   };
+  
+  // Insert (neutral) marker at cursor position
+  const insertNeutralMarker = () => {
+    if (editorRef.current) {
+      if (useTextarea) {
+        // For textarea, we need to handle selection manually
+        const start = editorRef.current.selectionStart;
+        const end = editorRef.current.selectionEnd;
+        const text = editorRef.current.value;
+        const newText = text.substring(0, start) + "(neutral)" + text.substring(end);
+        editorRef.current.value = newText;
+        // Set cursor after the inserted text
+        editorRef.current.selectionStart = editorRef.current.selectionEnd = start + 9;
+      } else {
+        // For contenteditable, we can use document.execCommand
+        document.execCommand('insertText', false, "(neutral)");
+      }
+      editorRef.current.focus();
+      debouncedUpdateCounts();
+    }
+  };
 
   // Convert to plain text (remove formatting)
   const convertToPlainText = () => {
@@ -268,18 +289,46 @@ const SimpleRichEditor = ({
         <button type="button" onClick={() => formatText('formatBlock', '<p>')} title="Paragraph">
           Text
         </button>
+        
+        {syntaxMode && (
+          <>
+            <span className="separator">|</span>
+            <button 
+              type="button" 
+              onClick={insertNeutralMarker} 
+              title="Insert (neutral) marker" 
+              className="neutral-button"
+            >
+              Insert (neutral)
+            </button>
+          </>
+        )}
       </div>
       )}
       
       {useTextarea ? (
-        <textarea
-          className="editor-content editor-textarea"
-          ref={editorRef}
-          onInput={debouncedUpdateCounts}
-          onKeyDown={handleKeyDown}
-          onPaste={handlePaste}
-          placeholder={placeholder || "Begin your story here..."}
-        />
+        <>
+          {syntaxMode && (
+            <div className="textarea-syntax-toolbar">
+              <button 
+                type="button" 
+                onClick={insertNeutralMarker} 
+                title="Insert (neutral) marker"
+                className="neutral-button"
+              >
+                Insert (neutral)
+              </button>
+            </div>
+          )}
+          <textarea
+            className="editor-content editor-textarea"
+            ref={editorRef}
+            onInput={debouncedUpdateCounts}
+            onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
+            placeholder={placeholder || "Begin your story here..."}
+          />
+        </>
       ) : (
         <div 
           className="editor-content" 

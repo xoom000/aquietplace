@@ -39,6 +39,20 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
+/* Special styling for neutral button in syntax mode */
+.neutral-button {
+  background-color: #2d2d2d !important;
+  color: #f0f0f0 !important;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  margin-left: 5px;
+  border: 1px solid #444 !important;
+}
+
+.neutral-button:hover {
+  background-color: #444 !important;
+}
+
 .editor-toolbar .separator {
   margin: 0 5px;
   color: var(--border-color);
@@ -86,6 +100,24 @@
   color: #f0c674; /* Yellow for emphasis tags */
 }
 
+/* Textarea syntax toolbar */
+.textarea-syntax-toolbar {
+  display: flex;
+  padding: 10px;
+  background-color: #2a2a2a;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border: 1px solid #444;
+  border-bottom: none;
+}
+
+.textarea-syntax-toolbar .neutral-button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
 /* Textarea variant */
 .editor-textarea {
   width: 100% !important;
@@ -101,6 +133,12 @@
   border-radius: 0 !important;
   outline: none !important;
   transition: all 0.3s ease !important;
+}
+
+/* Adjust textarea border-radius when syntax toolbar is present */
+.syntax-mode .textarea-syntax-toolbar + .editor-textarea {
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
 }
 
 /* Syntax mode for textarea */
