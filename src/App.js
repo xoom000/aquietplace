@@ -746,6 +746,7 @@ function App() {
               <input
                 id="apiKeyInput"
                 type="password"
+                autocomplete="new-password"
                 placeholder="Enter your OpenAI API key"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
