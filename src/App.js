@@ -743,10 +743,19 @@ function App() {
                 sessionStorage.setItem('openai_api_key', apiKey);
               }
             }}>
+              <input 
+                type="text" 
+                id="apiKeyUsername" 
+                autoComplete="username"
+                value="openai-api-key"
+                readOnly
+                style={{ display: 'none' }} 
+                aria-hidden="true"
+              />
               <input
                 id="apiKeyInput"
                 type="password"
-                autocomplete="new-password"
+                autoComplete="new-password"
                 placeholder="Enter your OpenAI API key"
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
