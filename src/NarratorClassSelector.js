@@ -177,8 +177,8 @@ const NarratorClassSelector = ({ onSelectNarratorClass }) => {
   return (
     <div className="narrator-class-selector">
       <div className="selector-header">
-        <h3>Choose Your Narrator Class</h3>
-        <p>Select a narrator archetype to define your storytelling style</p>
+        <h3>Narrator Voice Style Library</h3>
+        <p>Choose a professional narrator style for your audio</p>
       </div>
       
       <div className="class-categories">
@@ -210,7 +210,7 @@ const NarratorClassSelector = ({ onSelectNarratorClass }) => {
                       className="select-class-button"
                       onClick={(e) => handleSelectClass(narratorClass.instruction, e)}
                     >
-                      Select This Narrator
+                      Use This Style
                     </button>
                   </div>
                 ))}

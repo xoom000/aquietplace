@@ -116,16 +116,16 @@ const CreativeCorner = ({
         Experiment with how your writing sounds when read aloud before finalizing your story.
       </p>
       
-      <div className="narrator-class-display">
-        <div className="narrator-class-info">
-          <span className="narrator-label">Narrator Class:</span>
+      <div className="narrator-style-display">
+        <div className="narrator-style-info">
+          <span className="narrator-label">Narrator Style:</span>
           <span className="current-narrator">{narratorClass}</span>
         </div>
         <button 
           className="narrator-selector-toggle"
           onClick={() => setShowNarratorSelector(!showNarratorSelector)}
         >
-          {showNarratorSelector ? 'Hide Class Selector' : 'Choose Narrator Class'}
+          {showNarratorSelector ? 'Hide Style Library' : 'Browse Narrator Styles'}
         </button>
       </div>
       
@@ -188,18 +188,6 @@ const CreativeCorner = ({
           </button>
           <p className="rules-hint">See how punctuation and formatting affect narration</p>
         </div>
-
-        <div className="wil-wheaton-toggle">
-          <label className="wil-toggle-label">
-            <input
-              type="checkbox"
-              checked={useWilWheatonStyle}
-              onChange={() => setUseWilWheatonStyle(!useWilWheatonStyle)}
-            />
-            <span className="toggle-text">Wil Wheaton Dynamic Inflection</span>
-          </label>
-          <p className="wil-hint">Enable dynamic inflection for first-person stories</p>
-        </div>
         
         <div className="audio-quality-section">
           <label className="quality-label">Audio Quality:</label>
@@ -213,6 +201,18 @@ const CreativeCorner = ({
             <option value="tts-1-hd">HD Quality</option>
           </select>
           <p className="quality-hint">HD quality costs twice as much but sounds better</p>
+        </div>
+        
+        <div className="dynamic-inflection-section">
+          <label className="inflection-label">
+            <input
+              type="checkbox"
+              checked={useWilWheatonStyle}
+              onChange={() => setUseWilWheatonStyle(!useWilWheatonStyle)}
+            />
+            <span className="toggle-text">Dynamic Inflection</span>
+          </label>
+          <p className="inflection-hint">Enhance emotion transitions for first-person stories</p>
         </div>
       </div>
       
