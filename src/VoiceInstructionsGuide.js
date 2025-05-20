@@ -95,6 +95,12 @@ const VoiceInstructionsGuide = ({ onSelectInstruction }) => {
   // Define combination examples
   const combinationExamples = [
     {
+      id: 'wilwheaton',
+      title: 'Wil Wheaton Style',
+      icon: '🎬',
+      instruction: 'Read in the authentic, engaging style of Wil Wheaton narrating a first-person story. Use a conversational tone with natural inflection that adjusts dynamically to emotional context. Be attentive to emotional transitions - convey wry humor with subtle vocal changes, build anticipation in tense moments, and deliver dialogue with distinct character voices without overacting. Emphasize emotional honesty over dramatic performance, like you\'re sharing a personal story with friends around a table.'
+    },
+    {
       id: 'forest',
       title: 'Forest Nighttime Tale',
       icon: '🌙',

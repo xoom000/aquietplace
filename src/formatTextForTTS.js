@@ -82,11 +82,23 @@ export const formatTextForTTS = (htmlContent) => {
 };
 
 // Function to enhance voice instructions based on the reading instructions
-export const enhanceVoiceInstructions = (baseInstructions, instructionsJson) => {
+export const enhanceVoiceInstructions = (baseInstructions, instructionsJson, withDynamicInflection = false) => {
   const readingRules = instructionsJson.reading_instructions;
   
   // Create a comprehensive instruction string
   let enhancedInstructions = baseInstructions || "Read in a natural, engaging tone";
+  
+  // Add dynamic inflection instructions if enabled
+  if (withDynamicInflection) {
+    enhancedInstructions += `\n\nDynamic inflection guidance:
+- Pay special attention to emotional transitions in the text
+- When moving from a happy scene to a fearful one, gradually shift your tone
+- For dialogue between different emotional states, adjust your inflection to match
+- Maintain context awareness across paragraph boundaries
+- In first-person narration, embody the emotions as they develop
+- When humor transitions to seriousness, subtly shift your tone to reflect this
+- Connect related emotional content even when separated by description`;
+  }
   
   // Add specific punctuation and formatting instructions
   enhancedInstructions += `\n\nAdditional reading guidance:`;

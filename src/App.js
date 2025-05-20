@@ -34,7 +34,9 @@ const CreativeCorner = ({
   onFileImport,
   onPaste,
   isImporting,
-  setShowCustomRules
+  setShowCustomRules,
+  useWilWheatonStyle,
+  setUseWilWheatonStyle
 }) => {
   // Local state for controlling the visibility of the instructions guide
   const [showInstructionsGuide, setShowInstructionsGuide] = useState(false);
@@ -117,6 +119,18 @@ const CreativeCorner = ({
           📖 View Reading Rules
         </button>
         <p className="rules-hint">See how punctuation and formatting affect narration</p>
+      </div>
+
+      <div className="wil-wheaton-toggle">
+        <label className="wil-toggle-label">
+          <input
+            type="checkbox"
+            checked={useWilWheatonStyle}
+            onChange={() => setUseWilWheatonStyle(!useWilWheatonStyle)}
+          />
+          <span className="toggle-text">Wil Wheaton Dynamic Inflection</span>
+        </label>
+        <p className="wil-hint">Enable Wil Wheaton-style narration with dynamic inflection for first-person stories</p>
       </div>
 
       <div className="story-text-container">
@@ -240,6 +254,7 @@ function App() {
   const [audioFiles, setAudioFiles] = useState([]);
   const [voiceChoice, setVoiceChoice] = useState('alloy');
   const [combiningAudio, setCombiningAudio] = useState(false);
+  const [useWilWheatonStyle, setUseWilWheatonStyle] = useState(false);
   
   // State for file import
   const [isImporting, setIsImporting] = useState(false);
@@ -454,7 +469,7 @@ function App() {
             model: 'gpt-4o-mini-tts',
             input: sections[i],
             voice: creativeMode ? voiceChoice : selectedVoice,
-            instructions: enhanceVoiceInstructions(voiceInstructions, readingInstructions),
+            instructions: enhanceVoiceInstructions(voiceInstructions, readingInstructions, useWilWheatonStyle),
             response_format: 'mp3'
           })
         });
@@ -536,7 +551,7 @@ function App() {
           model: 'gpt-4o-mini-tts',
           input: section,
           voice: selectedVoice,
-          instructions: enhanceVoiceInstructions(voiceInstructions, readingInstructions),
+          instructions: enhanceVoiceInstructions(voiceInstructions, readingInstructions, useWilWheatonStyle),
           response_format: 'mp3'
         })
       });
@@ -665,6 +680,8 @@ function App() {
             onPaste={handlePaste}
             isImporting={isImporting}
             setShowCustomRules={setShowCustomRules}
+            useWilWheatonStyle={useWilWheatonStyle}
+            setUseWilWheatonStyle={setUseWilWheatonStyle}
           />
         ) : (
           <>
