@@ -1,6 +1,6 @@
 // SimpleRichEditor.js - Simplified for writers
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-// No need to import CSS as styles are included in App.css now
+import './SimpleRichEditor.css';
 
 const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = false, onCustomPaste, initialValue }) => {
   const editorRef = useRef(null);
@@ -259,17 +259,6 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
           onKeyDown={handleKeyDown}
           onPaste={handlePaste}
           placeholder={placeholder || "Begin your story here..."}
-          style={{
-            width: '100%',
-            minHeight: '300px',
-            resize: 'vertical',
-            fontFamily: 'inherit',
-            fontSize: 'inherit',
-            lineHeight: 'inherit',
-            padding: '10px',
-            border: '1px solid #ddd',
-            borderRadius: '4px'
-          }}
         />
       ) : (
         <div 
