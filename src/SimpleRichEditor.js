@@ -249,6 +249,27 @@ const SimpleRichEditor = ({
       debouncedUpdateCounts();
     }
   };
+  
+  // Insert (normal) marker at cursor position
+  const insertNormalMarker = () => {
+    if (editorRef.current) {
+      if (useTextarea) {
+        // For textarea, we need to handle selection manually
+        const start = editorRef.current.selectionStart;
+        const end = editorRef.current.selectionEnd;
+        const text = editorRef.current.value;
+        const newText = text.substring(0, start) + "(normal)" + text.substring(end);
+        editorRef.current.value = newText;
+        // Set cursor after the inserted text
+        editorRef.current.selectionStart = editorRef.current.selectionEnd = start + 8;
+      } else {
+        // For contenteditable, we can use document.execCommand
+        document.execCommand('insertText', false, "(normal)");
+      }
+      editorRef.current.focus();
+      debouncedUpdateCounts();
+    }
+  };
 
   // Convert to plain text (remove formatting)
   const convertToPlainText = () => {
@@ -301,6 +322,14 @@ const SimpleRichEditor = ({
             >
               Insert (neutral)
             </button>
+            <button 
+              type="button" 
+              onClick={insertNormalMarker} 
+              title="Insert (normal) marker" 
+              className="normal-button"
+            >
+              Insert (normal)
+            </button>
           </>
         )}
       </div>
@@ -317,6 +346,14 @@ const SimpleRichEditor = ({
                 className="neutral-button"
               >
                 Insert (neutral)
+              </button>
+              <button 
+                type="button" 
+                onClick={insertNormalMarker} 
+                title="Insert (normal) marker"
+                className="normal-button"
+              >
+                Insert (normal)
               </button>
             </div>
           )}

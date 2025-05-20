@@ -91,9 +91,9 @@ const CreativeCorner = ({
   };
   
   // Handle selecting a narrator class
-  const handleSelectNarratorClass = (instruction) => {
+  const handleSelectNarratorClass = (instruction, name) => {
     setVoiceInstructions(instruction);
-    setNarratorClass(instruction.split('\n')[0].replace('Read with ', '').replace('Narrate with ', '').replace('Channel ', '').replace('\'s', ''));
+    setNarratorClass(name || instruction.split('\n')[0].replace('Read with ', '').replace('Narrate with ', '').replace('Channel ', '').replace('\'s', ''));
     setShowNarratorSelector(false);
   };
 
@@ -166,7 +166,15 @@ const CreativeCorner = ({
             name="voice-instructions"
             placeholder="How should your story be told? (e.g., warm and magical, like a fireside tale)"
             value={voiceInstructions}
-            onChange={(e) => setVoiceInstructions(e.target.value)}
+            onChange={(e) => {
+              // Save cursor position
+              const cursorPos = e.target.selectionStart;
+              setVoiceInstructions(e.target.value);
+              // Restore cursor position after state update
+              setTimeout(() => {
+                e.target.selectionStart = e.target.selectionEnd = cursorPos;
+              }, 0);
+            }}
             rows={3}
             className="voice-instructions-textarea"
           />
@@ -285,7 +293,8 @@ const CreativeCorner = ({
               <li><code>(slowly) Take your time... (normal)</code></li>
               <li><code>(loudly) Listen to me! (normal)</code></li>
             </ul>
-            <p>These parenthetical instructions tell the AI how to read your text. When not in Syntax Mode, these still affect narration but are less visually prominent.</p>
+            <p>These parenthetical instructions tell the AI how to read your text. Use <code>(normal)</code> or <code>(neutral)</code> to return to the base narrative style.</p>
+            <p><strong>Tip:</strong> Use the "Insert (normal)" and "Insert (neutral)" buttons to quickly add these markers to your text.</p>
           </div>
         )}
       </div>
@@ -1091,7 +1100,15 @@ function App() {
                     name="instructions"
                     placeholder="How should your story be told? (e.g., warm and magical, like a fireside tale)"
                     value={voiceInstructions}
-                    onChange={(e) => setVoiceInstructions(e.target.value)}
+                    onChange={(e) => {
+                      // Save cursor position
+                      const cursorPos = e.target.selectionStart;
+                      setVoiceInstructions(e.target.value);
+                      // Restore cursor position after state update
+                      setTimeout(() => {
+                        e.target.selectionStart = e.target.selectionEnd = cursorPos;
+                      }, 0);
+                    }}
                     rows={3}
                     className="voice-instructions-textarea"
                   />

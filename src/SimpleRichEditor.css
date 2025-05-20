@@ -39,7 +39,7 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Special styling for neutral button in syntax mode */
+/* Special styling for syntax mode buttons */
 .neutral-button {
   background-color: #2d2d2d !important;
   color: #f0f0f0 !important;
@@ -51,6 +51,19 @@
 
 .neutral-button:hover {
   background-color: #444 !important;
+}
+
+.normal-button {
+  background-color: #3a5a40 !important;
+  color: #f0f0f0 !important;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  margin-left: 5px;
+  border: 1px solid #588157 !important;
+}
+
+.normal-button:hover {
+  background-color: #588157 !important;
 }
 
 .editor-toolbar .separator {
@@ -111,11 +124,12 @@
   border-bottom: none;
 }
 
-.textarea-syntax-toolbar .neutral-button {
+.textarea-syntax-toolbar button {
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
+  margin-right: 8px;
 }
 
 /* Textarea variant */
