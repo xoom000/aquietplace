@@ -141,27 +141,29 @@ const CreativeCorner = ({
         <VoiceInstructionsGuide onSelectInstruction={handleSelectInstruction} />
       )}
       
-      <div className="reading-rules-section">
-        <button 
-          className="manage-rules-btn"
-          onClick={() => setShowCustomRules(true)}
-          title="View reading rules reference"
-        >
-          📖 View Reading Rules
-        </button>
-        <p className="rules-hint">See how punctuation and formatting affect narration</p>
-      </div>
+      <div className="feature-controls">
+        <div className="reading-rules-section">
+          <button 
+            className="manage-rules-btn"
+            onClick={() => setShowCustomRules(true)}
+            title="View reading rules reference"
+          >
+            📖 View Reading Rules
+          </button>
+          <p className="rules-hint">See how punctuation and formatting affect narration</p>
+        </div>
 
-      <div className="wil-wheaton-toggle">
-        <label className="wil-toggle-label">
-          <input
-            type="checkbox"
-            checked={useWilWheatonStyle}
-            onChange={() => setUseWilWheatonStyle(!useWilWheatonStyle)}
-          />
-          <span className="toggle-text">Wil Wheaton Dynamic Inflection</span>
-        </label>
-        <p className="wil-hint">Enable Wil Wheaton-style narration with dynamic inflection for first-person stories</p>
+        <div className="wil-wheaton-toggle">
+          <label className="wil-toggle-label">
+            <input
+              type="checkbox"
+              checked={useWilWheatonStyle}
+              onChange={() => setUseWilWheatonStyle(!useWilWheatonStyle)}
+            />
+            <span className="toggle-text">Wil Wheaton Dynamic Inflection</span>
+          </label>
+          <p className="wil-hint">Enable dynamic inflection for first-person stories</p>
+        </div>
       </div>
       
       {/* Cost Estimate Display */}
