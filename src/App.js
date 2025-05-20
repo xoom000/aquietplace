@@ -230,7 +230,7 @@ const CreativeCorner = ({
             setStoryHtml(html);
           }}
           placeholder={syntaxMode ? 
-            "Write your story with emotional markup tags like [emotion:anger]text[/emotion] or [tone:sarcastic]text[/tone]..." : 
+            "Write your story with OpenAI voice instructions like (excited) This is exciting! (neutral)..." : 
             "Write or paste your story here (you can paste directly from Google Docs)..."}
           maxChars={MAX_CHARS * 5} // Allow longer stories in Creative Corner
           hideCharCount={false}
@@ -248,15 +248,15 @@ const CreativeCorner = ({
         {syntaxMode && (
           <div className="syntax-mode-help">
             <h4>Syntax Mode Help</h4>
-            <p>Add emotional markup to control how your text is read:</p>
+            <p>Add OpenAI's voice instructions directly in your text:</p>
             <ul>
-              <li><code>[emotion:angry]This text sounds angry![/emotion]</code></li>
-              <li><code>[tone:sarcastic]Oh, great...[/tone]</code></li>
-              <li><code>[emphasis:strong]Very important![/emphasis]</code></li>
-              <li><code>[pace:slow]Take your time...[/pace]</code></li>
-              <li><code>[volume:whisper]Don't tell anyone.[/volume]</code></li>
+              <li><code>(angry) This text sounds angry! (neutral)</code></li>
+              <li><code>(sarcastic) Oh, great... (normal)</code></li>
+              <li><code>(whispered) Don't tell anyone. (normal)</code></li>
+              <li><code>(slowly) Take your time... (normal)</code></li>
+              <li><code>(loudly) Listen to me! (normal)</code></li>
             </ul>
-            <p>These markups won't appear in normal mode but will affect how the AI reads your text.</p>
+            <p>These parenthetical instructions tell the AI how to read your text. When not in Syntax Mode, these still affect narration but are less visually prominent.</p>
           </div>
         )}
       </div>

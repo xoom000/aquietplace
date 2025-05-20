@@ -76,30 +76,9 @@ export const formatTextForTTS = (htmlContent) => {
   // Clean up excessive line breaks
   formattedText = formattedText.replace(/\n{3,}/g, '\n\n');
   
-  // Process any emotional syntax tags
-  // This regex will match patterns like [emotion:anger], [tone:sarcastic], etc.
-  formattedText = formattedText.replace(/\[(emotion|tone|emphasis|voice|pace|volume):([^\]]+)\](.*?)\[\/(emotion|tone|emphasis|voice|pace|volume)\]/g, 
-    (match, type, value, content) => {
-      // For the TTS API, we'll translate these tags into natural language instructions
-      // within the content to guide the voice model
-      switch(type) {
-        case 'emotion':
-          return `(${value}) ${content} (neutral)`;
-        case 'tone':
-          return `(in a ${value} tone) ${content} (back to normal)`;
-        case 'emphasis':
-          return `(${value} emphasis) ${content} (normal emphasis)`;
-        case 'voice':
-          return `(${value} voice) ${content} (normal voice)`;
-        case 'pace':
-          return `(${value} pace) ${content} (normal pace)`;
-        case 'volume':
-          return `(${value} volume) ${content} (normal volume)`;
-        default:
-          return content;
-      }
-    }
-  );
+  // In syntax mode, we're just leaving the parenthetical expressions as they are
+  // The user directly types instructions like (excited) or (whispered) which OpenAI TTS already understands
+  // No processing needed as OpenAI's TTS API already recognizes these parenthetical expressions
   
   // Trim whitespace from start and end
   formattedText = formattedText.trim();
