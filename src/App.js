@@ -31,6 +31,10 @@ const CreativeCorner = ({
   voices,
   audioFiles,
   setAudioFiles,
+  audioChunks,
+  currentChunkIndex,
+  setCurrentChunkIndex,
+  textChunks,
   onFileImport,
   onPaste,
   isImporting,
@@ -205,15 +209,31 @@ const CreativeCorner = ({
         <div className="audio-player-section">
           <EmbeddedAudioPlayer 
             audioUrl={audioFiles[0]}
+            audioChunks={audioChunks}
+            currentChunkIndex={currentChunkIndex}
+            setCurrentChunkIndex={setCurrentChunkIndex}
+            textChunks={textChunks}
             onDownload={() => {
-              // Custom download handler if needed
-              const a = document.createElement('a');
-              a.href = audioFiles[0];
-              a.download = 'my_story.mp3';
-              a.style.display = 'none';
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
+              // Custom download handler for all chunks
+              if (audioChunks.length > 1) {
+                // Download current chunk
+                const a = document.createElement('a');
+                a.href = audioChunks[currentChunkIndex];
+                a.download = `story_part_${currentChunkIndex + 1}.mp3`;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+              } else {
+                // Download single file
+                const a = document.createElement('a');
+                a.href = audioFiles[0];
+                a.download = 'my_story.mp3';
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+              }
             }}
           />
         </div>
@@ -252,6 +272,9 @@ function App() {
   const [storyText, setStoryText] = useState('');
   const [storyHtml, setStoryHtml] = useState('');
   const [audioFiles, setAudioFiles] = useState([]);
+  const [audioChunks, setAudioChunks] = useState([]); // Store all audio chunks
+  const [currentChunkIndex, setCurrentChunkIndex] = useState(0); // Track which chunk is being played
+  const [textChunks, setTextChunks] = useState([]); // Store the text for each chunk
   const [voiceChoice, setVoiceChoice] = useState('alloy');
   const [combiningAudio, setCombiningAudio] = useState(false);
   const [useWilWheatonStyle, setUseWilWheatonStyle] = useState(false);
@@ -484,25 +507,29 @@ function App() {
         completedSections++;
       }
       
-      // When all sections are processed, combine them (if more than one)
+      // Process all audio sections
       if (audioBlobs.length > 0) {
-        if (audioBlobs.length === 1) {
-          // Only one section, no need to combine
-          const audioUrl = URL.createObjectURL(audioBlobs[0]);
-          setAudioFiles([audioUrl]);
-        } else {
-          // Multiple sections - in a real app you'd combine them server-side
-          // For this demo we'll use the first one and explain the limitation
+        // Create URLs for all audio blobs
+        const audioUrls = audioBlobs.map(blob => URL.createObjectURL(blob));
+        
+        // Update audio chunks state for multi-section playback
+        setAudioChunks(audioUrls);
+        
+        // Store the text sections for reference
+        setTextChunks(sections);
+        
+        // Reset the current chunk index to the beginning
+        setCurrentChunkIndex(0);
+        
+        // For backwards compatibility, still set the audioFiles state
+        setAudioFiles([audioUrls[0]]);
+        
+        // Clear combining indicator after a brief delay
+        if (audioBlobs.length > 1) {
           setCombiningAudio(true);
-          
-          // Simulate combining audio files (in production, combine server-side)
           setTimeout(() => {
-            const audioUrl = URL.createObjectURL(audioBlobs[0]);
-            setAudioFiles([audioUrl]);
             setCombiningAudio(false);
-          }, 1500);
-          
-          console.log("In a full implementation, we would combine all audio files here");
+          }, 500);
         }
       }
     } catch (err) {
@@ -676,6 +703,10 @@ function App() {
             voices={voices}
             audioFiles={audioFiles}
             setAudioFiles={setAudioFiles}
+            audioChunks={audioChunks}
+            currentChunkIndex={currentChunkIndex}
+            setCurrentChunkIndex={setCurrentChunkIndex}
+            textChunks={textChunks}
             onFileImport={handleFileImport}
             onPaste={handlePaste}
             isImporting={isImporting}
