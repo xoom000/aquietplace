@@ -11,3 +11,193 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Forest Animation Styles */
+.falling-leaves {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.leaf {
+  position: absolute;
+  top: -10%;
+  background-color: rgba(94, 140, 49, 0.7);
+  border-radius: 50% 0;
+  transform: rotate(45deg);
+  animation: fall linear infinite;
+}
+
+.leaf1 {
+  background-color: rgba(94, 140, 49, 0.7);
+}
+
+.leaf2 {
+  background-color: rgba(156, 85, 24, 0.7);
+}
+
+.leaf3 {
+  background-color: rgba(204, 156, 58, 0.7);
+}
+
+@keyframes fall {
+  0% {
+    top: -10%;
+    transform: rotate(45deg) translateX(0);
+    opacity: 0.7;
+  }
+  
+  25% {
+    transform: rotate(90deg) translateX(20px);
+  }
+  
+  50% {
+    transform: rotate(135deg) translateX(-20px);
+  }
+  
+  75% {
+    transform: rotate(180deg) translateX(20px);
+  }
+  
+  100% {
+    top: 110%;
+    transform: rotate(225deg) translateX(-20px);
+    opacity: 0;
+  }
+}
+
+.fireflies {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.firefly {
+  position: absolute;
+  background-color: rgba(255, 230, 150, 0.8);
+  border-radius: 50%;
+  box-shadow: 0 0 5px 5px rgba(255, 230, 150, 0.3);
+  animation: firefly 3s ease-in-out infinite;
+}
+
+@keyframes firefly {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animals {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -2;
+}
+
+.fox {
+  position: absolute;
+  bottom: 20px;
+  right: 5%;
+  width: 60px;
+  height: 40px;
+  background-color: rgba(156, 85, 24, 0.3);
+  border-radius: 50% 40% 40% 50%;
+}
+
+.fox::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  background-color: rgba(156, 85, 24, 0.3);
+  border-radius: 50% 50% 0 0;
+}
+
+.owl {
+  position: absolute;
+  top: 15%;
+  left: 10%;
+  width: 30px;
+  height: 50px;
+  background-color: rgba(100, 100, 100, 0.3);
+  border-radius: 50% 50% 50% 50%;
+}
+
+.owl::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 5px;
+  width: 10px;
+  height: 10px;
+  background-color: rgba(100, 100, 100, 0.3);
+  border-radius: 50%;
+}
+
+.owl::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  right: 5px;
+  width: 10px;
+  height: 10px;
+  background-color: rgba(100, 100, 100, 0.3);
+  border-radius: 50%;
+}
+
+.rabbit {
+  position: absolute;
+  bottom: 10px;
+  left: 15%;
+  width: 30px;
+  height: 20px;
+  background-color: rgba(200, 200, 200, 0.3);
+  border-radius: 50%;
+}
+
+.rabbit::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 5px;
+  width: 8px;
+  height: 20px;
+  background-color: rgba(200, 200, 200, 0.3);
+  border-radius: 50% 50% 0 0;
+}
+
+.rabbit::after {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 17px;
+  width: 8px;
+  height: 20px;
+  background-color: rgba(200, 200, 200, 0.3);
+  border-radius: 50% 50% 0 0;
+}
+
+.ambient-light {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at top, rgba(104, 155, 55, 0.1) 0%, rgba(44, 41, 21, 0.1) 100%);
+  pointer-events: none;
+  z-index: -3;
+}
