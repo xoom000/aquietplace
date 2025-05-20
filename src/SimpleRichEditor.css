@@ -46,12 +46,12 @@
 
 /* Content area styling */
 .editor-content {
-  min-height: 250px;
-  max-height: 500px;
+  min-height: 350px;
+  max-height: 700px;
   overflow-y: auto;
-  padding: 15px;
-  line-height: 1.7;
-  font-size: 16px;
+  padding: 20px;
+  line-height: 1.8;
+  font-size: 18px;
   background-color: rgba(248, 244, 227, 0.95);
   color: #2c2915;
   border: 1px solid var(--border-color);
@@ -63,12 +63,12 @@
 /* Textarea variant */
 .editor-textarea {
   width: 100% !important;
-  min-height: 300px !important;
+  min-height: 400px !important;
   resize: vertical !important;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-  font-size: 16px !important;
-  line-height: 1.7 !important;
-  padding: 15px !important;
+  font-size: 18px !important;
+  line-height: 1.8 !important;
+  padding: 20px !important;
   background-color: rgba(248, 244, 227, 0.95) !important;
   color: #2c2915 !important;
   border: none !important;

@@ -154,7 +154,7 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
     }
   };
 
-  // Handle pasting to strip unwanted formatting
+  // Handle pasting with HTML and formatting preservation
   const handlePaste = (e) => {
     // If using textarea, just let the default paste work
     if (useTextarea) {
@@ -177,15 +177,26 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
       }
     }
     
-    // Only prevent default if we're stripping formatting ourselves
-    // If a custom handler was provided and didn't prevent default, allow normal paste
-    if (!onCustomPaste) {
-      e.preventDefault();
+    e.preventDefault();
+    
+    // Try to get HTML content first
+    let content = e.clipboardData.getData('text/html');
+    
+    if (content) {
+      // Clean up the HTML to only keep basic formatting
+      // Create a temporary div to sanitize the HTML
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = content;
       
-      // Get text from clipboard
+      // Remove any scripts or style tags for security
+      const scripts = tempDiv.querySelectorAll('script, style');
+      scripts.forEach(script => script.remove());
+      
+      // Use insertHTML command to preserve formatting
+      document.execCommand('insertHTML', false, tempDiv.innerHTML);
+    } else {
+      // Fallback to plain text if no HTML is available
       const text = e.clipboardData.getData('text/plain');
-      
-      // Insert text at cursor position
       document.execCommand('insertText', false, text);
     }
     

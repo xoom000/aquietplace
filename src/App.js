@@ -307,6 +307,8 @@ function App() {
   const [creativeMode, setCreativeMode] = useState(true); // Default to creative mode
   const [storyText, setStoryText] = useState('');
   const [storyHtml, setStoryHtml] = useState('');
+  const [savedStoryText, setSavedStoryText] = useState(''); // For preserving creative mode content
+  const [savedStoryHtml, setSavedStoryHtml] = useState(''); // For preserving creative mode HTML
   const [audioFiles, setAudioFiles] = useState([]);
   const [audioChunks, setAudioChunks] = useState([]); // Store all audio chunks
   const [currentChunkIndex, setCurrentChunkIndex] = useState(0); // Track which chunk is being played
@@ -429,21 +431,35 @@ function App() {
     event.target.value = null;
   };
   
-  // Function to handle pasted content
+  // Function to handle pasted content with HTML formatting
   const handlePaste = (event, targetMode) => {
-    // Get the pasted text from clipboard
+    // Try to get HTML content first
+    const pastedHtml = event.clipboardData.getData('text/html');
     const pastedText = event.clipboardData.getData('text/plain');
     
-    if (!pastedText) return;
+    if (!pastedText && !pastedHtml) return;
     
     // Always handle the paste for any text content
     // Update the appropriate text field based on mode
     if (targetMode === 'creative') {
       setStoryText(pastedText);
-      setStoryHtml(pastedText);
+      
+      // If HTML is available, use it to preserve formatting
+      if (pastedHtml) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = pastedHtml;
+        
+        // Remove potentially dangerous elements
+        const scripts = tempDiv.querySelectorAll('script, style, iframe');
+        scripts.forEach(script => script.remove());
+        
+        setStoryHtml(tempDiv.innerHTML);
+      } else {
+        setStoryHtml(pastedText);
+      }
     } else {
       setText(pastedText);
-      setHtmlText(pastedText);
+      setHtmlText(pastedHtml || pastedText);
     }
     
     // Prevent the default paste behavior to avoid double-pasting
@@ -686,13 +702,27 @@ function App() {
         <div className="mode-toggle">
           <button
             className={`mode-button ${!creativeMode ? 'active' : ''}`}
-            onClick={() => setCreativeMode(false)}
+            onClick={() => {
+              // Save current creative mode content before switching
+              if (creativeMode) {
+                setSavedStoryText(storyText);
+                setSavedStoryHtml(storyHtml);
+              }
+              setCreativeMode(false);
+            }}
           >
             Book Studio
           </button>
           <button
             className={`mode-button ${creativeMode ? 'active' : ''}`}
-            onClick={() => setCreativeMode(true)}
+            onClick={() => {
+              // Restore saved content when switching back to creative mode
+              if (!creativeMode && savedStoryText) {
+                setStoryText(savedStoryText);
+                setStoryHtml(savedStoryHtml);
+              }
+              setCreativeMode(true);
+            }}
           >
             Creative Corner
           </button>
