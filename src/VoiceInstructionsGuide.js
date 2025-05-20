@@ -101,6 +101,36 @@ const VoiceInstructionsGuide = ({ onSelectInstruction }) => {
       instruction: 'Read in the authentic, engaging style of Wil Wheaton narrating a first-person story. Use a conversational tone with natural inflection that adjusts dynamically to emotional context. Be attentive to emotional transitions - convey wry humor with subtle vocal changes, build anticipation in tense moments, and deliver dialogue with distinct character voices without overacting. Emphasize emotional honesty over dramatic performance, like you\'re sharing a personal story with friends around a table.'
     },
     {
+      id: 'stephenfry',
+      title: 'Stephen Fry Style',
+      icon: '🧙‍♂️',
+      instruction: 'Narrate with the eloquent, witty warmth of Stephen Fry. Speak with a cultivated British accent that combines gentle authority with playful intelligence. Handle humorous passages with subtle irony, deliver dialogue with charming character distinctions, and approach descriptive text with reverent appreciation. Maintain a comfortable, unhurried pace that gives weight to beautiful language while keeping the listener engaged through clear articulation and thoughtful emphasis.'
+    },
+    {
+      id: 'neilgaiman',
+      title: 'Neil Gaiman Style',
+      icon: '🌑',
+      instruction: 'Read with Neil Gaiman\'s distinct, mesmerizing cadence - a soft-spoken voice that carries immense weight. Deliver the text with an unhurried, deliberate pace, allowing anticipatory pauses that draw the listener deeper into the story. Approach magical or mysterious elements with a matter-of-fact tone that makes the extraordinary seem perfectly natural. Use subtle, nuanced inflection rather than dramatic performance, creating an intimate atmosphere as if telling a secret story meant only for the listener\'s ears.'
+    },
+    {
+      id: 'levarburton',
+      title: 'LeVar Burton Style',
+      icon: '🌈',
+      instruction: 'Narrate with LeVar Burton\'s warm, inviting storytelling style that combines welcoming friendliness with genuine passion for the material. Speak with clear, precise diction and a rhythmic flow that makes complex ideas accessible. Infuse your reading with authentic enthusiasm and gentle guidance, creating a sense of shared discovery. Use thoughtful pauses to let important moments resonate, and maintain an engaging, educational tone that respects the listener\'s intelligence while making them feel included in the journey.'
+    },
+    {
+      id: 'juliawhelen',
+      title: 'Julia Whelan Style',
+      icon: '✨',
+      instruction: 'Read with Julia Whelan\'s clear, versatile narration style that balances emotional authenticity with restrained performance. Deliver the text with perfect clarity and thoughtful pacing, using subtle vocal shifts to distinguish between characters without overacting. Approach emotional moments with genuine feeling that never becomes melodramatic. Maintain a sophisticated, intelligent tone that honors the text while bringing it vividly to life through precise articulation, natural rhythms, and intuitive emphasis on the right words.'
+    },
+    {
+      id: 'michaelsheen',
+      title: 'Michael Sheen Style',
+      icon: '🏴󠁧󠁢󠁷󠁬󠁳󠁿',
+      instruction: 'Narrate with Michael Sheen\'s extraordinarily dynamic and passionate storytelling voice. Embrace the musicality of language with his Welsh-influenced cadence that rises and falls like a dramatic tide. Bring characters vividly to life through distinct vocal characterizations that feel authentic rather than caricatured. Approach dramatic moments with full emotional commitment, varying from hushed intensity to rousing declaration as the story demands. Read with a sense of wonder and reverence for the text, as if each word carries magic.'
+    },
+    {
       id: 'forest',
       title: 'Forest Nighttime Tale',
       icon: '🌙',
