@@ -661,6 +661,56 @@ h2::after {
   color: #f8f8f8;
 }
 
+/* Narrator Class Display */
+.narrator-class-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(to right, rgba(0,0,0,0.3), rgba(94, 140, 49, 0.1));
+  border-radius: 10px;
+  padding: 12px 20px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color);
+}
+
+.narrator-class-info {
+  display: flex;
+  align-items: center;
+}
+
+.narrator-label {
+  font-weight: bold;
+  color: var(--accent-color);
+  margin-right: 10px;
+}
+
+.current-narrator {
+  background-color: rgba(204, 156, 58, 0.2);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  color: var(--accent-color);
+  border: 1px solid var(--accent-color);
+}
+
+.narrator-selector-toggle {
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.narrator-selector-toggle:hover {
+  background-color: var(--hover-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 /* Processing Status - REDESIGNED */
 .processing-status {
   display: flex;

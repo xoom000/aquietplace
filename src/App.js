@@ -5,6 +5,7 @@ import './App.css';
 import SimpleRichEditor from './SimpleRichEditor';
 import ForestAnimations from './ForestAnimations';
 import VoiceInstructionsGuide from './VoiceInstructionsGuide';
+import NarratorClassSelector from './NarratorClassSelector';
 import EmbeddedAudioPlayer from './EmbeddedAudioPlayer';
 import ApiKeyHelp from './ApiKeyHelp';
 import ReadingRulesDisplay from './ReadingRulesDisplay';
@@ -72,7 +73,11 @@ const CreativeCorner = ({
   ttsModel,
   setTtsModel,
   syntaxMode,
-  setSyntaxMode
+  setSyntaxMode,
+  showNarratorSelector,
+  setShowNarratorSelector,
+  narratorClass,
+  setNarratorClass
 }) => {
   // Local state for controlling the visibility of the instructions guide
   const [showInstructionsGuide, setShowInstructionsGuide] = useState(false);
@@ -83,6 +88,13 @@ const CreativeCorner = ({
   // Handle selecting an instruction from the guide
   const handleSelectInstruction = (instruction) => {
     setVoiceInstructions(instruction);
+  };
+  
+  // Handle selecting a narrator class
+  const handleSelectNarratorClass = (instruction) => {
+    setVoiceInstructions(instruction);
+    setNarratorClass(instruction.split('\n')[0].replace('Read with ', '').replace('Narrate with ', '').replace('Channel ', '').replace('\'s', ''));
+    setShowNarratorSelector(false);
   };
 
   // Function to toggle guide visibility
@@ -103,6 +115,23 @@ const CreativeCorner = ({
         Bring your stories to life with different voices and moods. 
         Experiment with how your writing sounds when read aloud before finalizing your story.
       </p>
+      
+      <div className="narrator-class-display">
+        <div className="narrator-class-info">
+          <span className="narrator-label">Narrator Class:</span>
+          <span className="current-narrator">{narratorClass}</span>
+        </div>
+        <button 
+          className="narrator-selector-toggle"
+          onClick={() => setShowNarratorSelector(!showNarratorSelector)}
+        >
+          {showNarratorSelector ? 'Hide Class Selector' : 'Choose Narrator Class'}
+        </button>
+      </div>
+      
+      {showNarratorSelector && (
+        <NarratorClassSelector onSelectNarratorClass={handleSelectNarratorClass} />
+      )}
 
       <div className="voice-controls">
         <div className="voice-selector">
@@ -409,6 +438,10 @@ function App() {
   
   // State for syntax mode
   const [syntaxMode, setSyntaxMode] = useState(false);
+  
+  // State for narrator class
+  const [showNarratorSelector, setShowNarratorSelector] = useState(false);
+  const [narratorClass, setNarratorClass] = useState('Default');
 
   // Available voices
   const voices = [
@@ -967,6 +1000,10 @@ function App() {
             setTtsModel={setTtsModel}
             syntaxMode={syntaxMode}
             setSyntaxMode={setSyntaxMode}
+            showNarratorSelector={showNarratorSelector}
+            setShowNarratorSelector={setShowNarratorSelector}
+            narratorClass={narratorClass}
+            setNarratorClass={setNarratorClass}
           />
         ) : (
           <>
