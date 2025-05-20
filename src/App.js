@@ -68,7 +68,9 @@ const CreativeCorner = ({
   useWilWheatonStyle,
   setUseWilWheatonStyle,
   costEstimate,
-  apiProgress
+  apiProgress,
+  ttsModel,
+  setTtsModel
 }) => {
   // Local state for controlling the visibility of the instructions guide
   const [showInstructionsGuide, setShowInstructionsGuide] = useState(false);
@@ -166,6 +168,20 @@ const CreativeCorner = ({
             <span className="toggle-text">Wil Wheaton Dynamic Inflection</span>
           </label>
           <p className="wil-hint">Enable dynamic inflection for first-person stories</p>
+        </div>
+        
+        <div className="audio-quality-section">
+          <label className="quality-label">Audio Quality:</label>
+          <select 
+            value={ttsModel} 
+            onChange={(e) => setTtsModel(e.target.value)}
+            className="quality-select"
+            title="Select audio quality (HD is higher quality but costs more)"
+          >
+            <option value="tts-1">Standard Quality</option>
+            <option value="tts-1-hd">HD Quality</option>
+          </select>
+          <p className="quality-hint">HD quality costs twice as much but sounds better</p>
         </div>
       </div>
       
@@ -360,6 +376,9 @@ function App() {
     total: 0, 
     isGenerating: false 
   });
+  
+  // State for TTS model selection (standard vs HD)
+  const [ttsModel, setTtsModel] = useState('tts-1-hd'); // Default to HD for better quality
 
   // Available voices
   const voices = [
@@ -599,7 +618,7 @@ function App() {
             'Authorization': `Bearer ${apiKey}`
           },
           body: JSON.stringify({
-            model: 'gpt-4o-mini-tts',
+            model: ttsModel,
             input: sections[i],
             voice: creativeMode ? voiceChoice : selectedVoice,
             instructions: enhanceVoiceInstructions(voiceInstructions, readingInstructions, useWilWheatonStyle),
@@ -658,7 +677,7 @@ function App() {
   // Update cost estimate in real-time as user types
   const updateCostEstimate = (text) => {
     const formattedText = text ? formatTextForTTS(text) : '';
-    const estimate = calculateCost(formattedText);
+    const estimate = calculateCost(formattedText, ttsModel);
     setCostEstimate(estimate);
   };
 
@@ -668,7 +687,7 @@ function App() {
     const formattedText = storyHtml ? formatTextForTTS(storyHtml) : storyText;
     
     // Calculate cost estimate before processing
-    const estimate = calculateCost(formattedText);
+    const estimate = calculateCost(formattedText, ttsModel);
     setCostEstimate(estimate);
     
     // Process the full story at once, handling splitting behind the scenes
@@ -699,7 +718,7 @@ function App() {
     }
     
     // Calculate cost estimate for this section
-    const estimate = calculateCost(section);
+    const estimate = calculateCost(section, ttsModel);
     setCostEstimate(estimate);
     
     setIsProcessing(true);
@@ -728,7 +747,7 @@ function App() {
           'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model: 'gpt-4o-mini-tts',
+          model: ttsModel,
           input: section,
           voice: selectedVoice,
           instructions: enhanceVoiceInstructions(voiceInstructions, readingInstructions, useWilWheatonStyle),
@@ -909,6 +928,8 @@ function App() {
             useWilWheatonStyle={useWilWheatonStyle}
             setUseWilWheatonStyle={setUseWilWheatonStyle}
             costEstimate={costEstimate}
+            ttsModel={ttsModel}
+            setTtsModel={setTtsModel}
           />
         ) : (
           <>
@@ -974,6 +995,21 @@ function App() {
                     ))}
                   </select>
                 </div>
+                
+                <div className="audio-quality-section book-mode">
+                  <label htmlFor="quality-select">Audio Quality:</label>
+                  <select
+                    id="quality-select"
+                    name="quality-select"
+                    value={ttsModel}
+                    onChange={(e) => setTtsModel(e.target.value)}
+                    className="quality-select"
+                  >
+                    <option value="tts-1">Standard Quality</option>
+                    <option value="tts-1-hd">HD Quality</option>
+                  </select>
+                  <p className="quality-hint">HD quality costs twice as much but sounds better</p>
+                </div>
                 <div className="instructions-input">
                   <label htmlFor="instructions">Voice Mood & Style:</label>
                   <textarea
@@ -1013,7 +1049,7 @@ function App() {
                         <h3>Section {index + 1}</h3>
                         <div className="section-details">
                           <span className="section-cost">
-                            ~{calculateCost(section) && calculateCost(section).formattedCost ? calculateCost(section).formattedCost : '$0.00'} • {section ? section.length.toLocaleString() : '0'} chars
+                            ~{calculateCost(section, ttsModel) && calculateCost(section, ttsModel).formattedCost ? calculateCost(section, ttsModel).formattedCost : '$0.00'} • {section ? section.length.toLocaleString() : '0'} chars
                           </span>
                           <button
                             className="listen-button"

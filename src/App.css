@@ -345,6 +345,54 @@ h2::after {
   gap: var(--element-spacing);
 }
 
+/* Audio Quality Section - NEW */
+.audio-quality-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  background: rgba(137, 168, 212, 0.15);
+  border-radius: var(--border-radius-md);
+  border: 1px solid rgba(137, 168, 212, 0.3);
+}
+
+.audio-quality-section.book-mode {
+  width: 100%;
+  margin: 15px 0;
+  max-width: 100%;
+}
+
+.quality-label {
+  font-weight: bold;
+  color: #89a8d4;
+  margin-bottom: 5px;
+}
+
+.quality-select {
+  width: 100%;
+  padding: 8px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  color: var(--text-color);
+  font-size: 14px;
+  max-width: 200px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f8f4e3' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 1em;
+}
+
+.quality-hint {
+  font-size: 13px;
+  color: var(--text-color);
+  opacity: 0.8;
+  margin-top: 6px;
+  text-align: center;
+}
+
 /* Reading Rules Section - REDESIGNED */
 .reading-rules-section {
   flex: 1;
