@@ -15,6 +15,32 @@ import mammoth from 'mammoth';
 // Maximum character limit for OpenAI's text-to-speech API (hidden from user)
 const MAX_CHARS = 4096;
 
+// OpenAI TTS API pricing per 1,000 characters (in USD)
+const PRICING = {
+  'tts-1': 0.015,      // Standard model
+  'tts-1-hd': 0.030,   // HD model
+  'gpt-4o-mini-tts': 0.015  // Using the standard pricing rate for the mini model
+};
+
+// Function to calculate estimated cost based on character count and model
+const calculateCost = (text, model = 'gpt-4o-mini-tts') => {
+  if (!text) return 0;
+  
+  // Get character count
+  const charCount = text.length;
+  
+  // Calculate cost based on pricing per 1,000 characters
+  const rate = PRICING[model] || PRICING['gpt-4o-mini-tts'];
+  const cost = (charCount / 1000) * rate;
+  
+  // Return formatted cost
+  return {
+    charCount,
+    cost: cost.toFixed(4),
+    formattedCost: `$${cost.toFixed(2)}`
+  };
+};
+
 // ─── CreativeCorner Component ──────────────────────────────
 const CreativeCorner = ({
   storyText,
@@ -40,7 +66,8 @@ const CreativeCorner = ({
   isImporting,
   setShowCustomRules,
   useWilWheatonStyle,
-  setUseWilWheatonStyle
+  setUseWilWheatonStyle,
+  costEstimate
 }) => {
   // Local state for controlling the visibility of the instructions guide
   const [showInstructionsGuide, setShowInstructionsGuide] = useState(false);
@@ -135,6 +162,15 @@ const CreativeCorner = ({
           <span className="toggle-text">Wil Wheaton Dynamic Inflection</span>
         </label>
         <p className="wil-hint">Enable Wil Wheaton-style narration with dynamic inflection for first-person stories</p>
+      </div>
+      
+      {/* Cost Estimate Display */}
+      <div className="cost-estimate">
+        <div className="cost-info">
+          <span className="char-count">{costEstimate.charCount.toLocaleString()} characters</span>
+          <span className="cost-amount">{costEstimate.formattedCost}</span>
+        </div>
+        <p className="cost-hint">Estimated OpenAI API cost for TTS conversion</p>
       </div>
 
       <div className="story-text-container">
@@ -287,6 +323,9 @@ function App() {
   
   // State for custom rules manager
   const [showCustomRules, setShowCustomRules] = useState(false);
+  
+  // State for cost estimation
+  const [costEstimate, setCostEstimate] = useState({ charCount: 0, cost: '0.0000', formattedCost: '$0.00' });
 
   // Available voices
   const voices = [
@@ -315,6 +354,17 @@ function App() {
       }
     }
   }, []);
+  
+  // Update cost estimate when text changes
+  useEffect(() => {
+    if (creativeMode) {
+      const formattedText = storyHtml ? formatTextForTTS(storyHtml) : storyText;
+      updateCostEstimate(formattedText);
+    } else {
+      const formattedText = htmlText ? formatTextForTTS(htmlText) : text;
+      updateCostEstimate(formattedText);
+    }
+  }, [creativeMode, storyText, storyHtml, text, htmlText]);
 
   // Function to handle editor changes
   const handleEditorChange = (html, plainText) => {
@@ -476,7 +526,6 @@ function App() {
       
       // Process each section
       const audioBlobs = [];
-      let completedSections = 0;
       
       for (let i = 0; i < sections.length; i++) {
         setCurrentSection(i);
@@ -504,7 +553,6 @@ function App() {
         
         const audioBlob = await response.blob();
         audioBlobs.push(audioBlob);
-        completedSections++;
       }
       
       // Process all audio sections
@@ -540,10 +588,21 @@ function App() {
     }
   };
 
+  // Update cost estimate in real-time as user types
+  const updateCostEstimate = (text) => {
+    const formattedText = text ? formatTextForTTS(text) : '';
+    const estimate = calculateCost(formattedText);
+    setCostEstimate(estimate);
+  };
+
   // Function to preview story text in creative corner
   const previewStoryText = async () => {
     // Use formatted text from HTML for TTS
     const formattedText = storyHtml ? formatTextForTTS(storyHtml) : storyText;
+    
+    // Calculate cost estimate before processing
+    const estimate = calculateCost(formattedText);
+    setCostEstimate(estimate);
     
     // Process the full story at once, handling splitting behind the scenes
     await processFullAudio(formattedText);
@@ -554,6 +613,15 @@ function App() {
     const sections = splitIntoSections(text, htmlText);
     setAudioSections(sections);
     setError('');
+    
+    // Calculate total cost for all sections
+    let totalChars = 0;
+    sections.forEach(section => {
+      totalChars += section.length;
+    });
+    
+    const totalEstimate = calculateCost(" ".repeat(totalChars));
+    setCostEstimate(totalEstimate);
   };
 
   // Convert a single section to speech in book mode
@@ -562,6 +630,10 @@ function App() {
       setError('OpenAI API key not found. Please set REACT_APP_OPENAI_API_KEY in .env file');
       return;
     }
+    
+    // Calculate cost estimate for this section
+    const estimate = calculateCost(section);
+    setCostEstimate(estimate);
     
     setIsProcessing(true);
     setCurrentSection(index);
@@ -713,6 +785,7 @@ function App() {
             setShowCustomRules={setShowCustomRules}
             useWilWheatonStyle={useWilWheatonStyle}
             setUseWilWheatonStyle={setUseWilWheatonStyle}
+            costEstimate={costEstimate}
           />
         ) : (
           <>
@@ -788,6 +861,15 @@ function App() {
                     className="voice-instructions-textarea"
                   />
                 </div>
+
+                {/* Cost Estimate Display */}
+                <div className="cost-estimate">
+                  <div className="cost-info">
+                    <span className="char-count">{costEstimate.charCount.toLocaleString()} characters</span>
+                    <span className="cost-amount">{costEstimate.formattedCost}</span>
+                  </div>
+                  <p className="cost-hint">Estimated OpenAI API cost for TTS conversion</p>
+                </div>
               </section>
             )}
 
@@ -804,16 +886,21 @@ function App() {
                     <div key={index} className="section-item">
                       <div className="section-header">
                         <h3>Section {index + 1}</h3>
-                        <button
-                          className="listen-button"
-                          onClick={() => convertSectionToSpeech(section, index)}
-                          disabled={isProcessing}
-                        >
-                          {isProcessing && currentSection === index 
-                            ? 'Creating Audio...' 
-                            : 'Listen to This Section'
-                          }
-                        </button>
+                        <div className="section-details">
+                          <span className="section-cost">
+                            ~{calculateCost(section).formattedCost} • {section.length.toLocaleString()} chars
+                          </span>
+                          <button
+                            className="listen-button"
+                            onClick={() => convertSectionToSpeech(section, index)}
+                            disabled={isProcessing}
+                          >
+                            {isProcessing && currentSection === index 
+                              ? 'Creating Audio...' 
+                              : 'Listen to This Section'
+                            }
+                          </button>
+                        </div>
                       </div>
                       <div className="section-content">
                         <p>{section}</p>

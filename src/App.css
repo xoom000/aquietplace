@@ -830,3 +830,54 @@ footer {
   margin-top: 6px;
   text-align: center;
 }
+
+/* Cost Estimation Display */
+.cost-estimate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 15px 0;
+  padding: 10px 15px;
+  background-color: rgba(126, 176, 105, 0.15);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+  border-left: 3px solid var(--success-color);
+}
+
+.cost-info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.char-count {
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.cost-amount {
+  font-weight: bold;
+  color: var(--success-color);
+  font-size: 1.1rem;
+}
+
+.cost-hint {
+  font-size: 0.8rem;
+  color: var(--text-color);
+  opacity: 0.8;
+  text-align: center;
+}
+
+.section-details {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.section-cost {
+  font-size: 0.85rem;
+  color: var(--accent-color);
+  white-space: nowrap;
+}
