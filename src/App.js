@@ -737,7 +737,12 @@ function App() {
             <label htmlFor="apiKeyInput">
               OpenAI API Key Required:
             </label>
-            <div className="api-key-controls">
+            <form className="api-key-controls" onSubmit={(e) => {
+              e.preventDefault();
+              if (apiKey) {
+                sessionStorage.setItem('openai_api_key', apiKey);
+              }
+            }}>
               <input
                 id="apiKeyInput"
                 type="password"
@@ -747,24 +752,21 @@ function App() {
                 className="api-key-input"
               />
               <button 
-                onClick={() => {
-                  if (apiKey) {
-                    sessionStorage.setItem('openai_api_key', apiKey);
-                  }
-                }}
+                type="submit"
                 disabled={!apiKey}
                 className="api-key-save"
               >
                 Save for Session
               </button>
               <button 
+                type="button"
                 onClick={() => setShowApiKeyHelp(true)}
                 className="api-key-help-btn"
                 title="How to get an API key"
               >
                 ?
               </button>
-            </div>
+            </form>
           </div>
         )}
         
