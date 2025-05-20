@@ -58,6 +58,32 @@
   border-top: none;
   border-bottom: none;
   outline: none;
+  transition: all 0.3s ease;
+}
+
+/* Syntax mode styling */
+.syntax-mode .editor-content {
+  background-color: #1a1a1a;
+  color: #f8f8f8;
+  font-family: 'Courier New', monospace;
+}
+
+/* Style for emotional syntax tags */
+.syntax-mode .editor-content [data-syntax-tag] {
+  color: #61dafb; /* Light blue */
+  font-weight: bold;
+}
+
+.syntax-mode .editor-content .emotion-tag {
+  color: #ff6b6b; /* Red for emotion tags */
+}
+
+.syntax-mode .editor-content .tone-tag {
+  color: #5cdb95; /* Green for tone tags */
+}
+
+.syntax-mode .editor-content .emphasis-tag {
+  color: #f0c674; /* Yellow for emphasis tags */
 }
 
 /* Textarea variant */
@@ -74,6 +100,14 @@
   border: none !important;
   border-radius: 0 !important;
   outline: none !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Syntax mode for textarea */
+.syntax-mode .editor-textarea {
+  background-color: #1a1a1a !important;
+  color: #f8f8f8 !important;
+  font-family: 'Courier New', monospace !important;
 }
 
 /* Placeholder styling */

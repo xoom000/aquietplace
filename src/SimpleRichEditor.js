@@ -2,7 +2,16 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './SimpleRichEditor.css';
 
-const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = false, onCustomPaste, initialValue }) => {
+const SimpleRichEditor = ({ 
+  onChange, 
+  placeholder, 
+  maxChars, 
+  hideCharCount = false, 
+  onCustomPaste, 
+  initialValue,
+  syntaxMode = false,
+  onSyntaxModeChange
+}) => {
   const editorRef = useRef(null);
   const [charCount, setCharCount] = useState(0);
   const [wordCount, setWordCount] = useState(0);
@@ -230,7 +239,7 @@ const SimpleRichEditor = ({ onChange, placeholder, maxChars, hideCharCount = fal
   };
 
   return (
-    <div className="simple-editor-container">
+    <div className={`simple-editor-container ${syntaxMode ? 'syntax-mode' : ''}`}>
       {!useTextarea && (
         <div className={`editor-toolbar ${isToolbarVisible ? 'visible' : ''}`}>
         <button type="button" onClick={() => formatText('bold')} title="Bold (Ctrl+B)">

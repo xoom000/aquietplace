@@ -70,7 +70,9 @@ const CreativeCorner = ({
   costEstimate,
   apiProgress,
   ttsModel,
-  setTtsModel
+  setTtsModel,
+  syntaxMode,
+  setSyntaxMode
 }) => {
   // Local state for controlling the visibility of the instructions guide
   const [showInstructionsGuide, setShowInstructionsGuide] = useState(false);
@@ -213,6 +215,13 @@ const CreativeCorner = ({
             >
               {isImporting ? 'Importing...' : 'Import File'}
             </button>
+            <button
+              onClick={() => setSyntaxMode(!syntaxMode)}
+              className={`syntax-mode-toggle ${syntaxMode ? 'active' : ''}`}
+              title={syntaxMode ? "Exit Syntax Mode" : "Enter Syntax Mode for emotional markup"}
+            >
+              {syntaxMode ? "Exit Syntax Mode" : "Syntax Mode"}
+            </button>
           </div>
         </div>
         <SimpleRichEditor 
@@ -220,11 +229,14 @@ const CreativeCorner = ({
             setStoryText(plainText);
             setStoryHtml(html);
           }}
-          placeholder="Write or paste your story here (you can paste directly from Google Docs)..."
+          placeholder={syntaxMode ? 
+            "Write your story with emotional markup tags like [emotion:anger]text[/emotion] or [tone:sarcastic]text[/tone]..." : 
+            "Write or paste your story here (you can paste directly from Google Docs)..."}
           maxChars={MAX_CHARS * 5} // Allow longer stories in Creative Corner
           hideCharCount={false}
           onCustomPaste={(e) => onPaste(e, 'creative')}
           initialValue={storyText}
+          syntaxMode={syntaxMode}
         />
         <div className="char-hint">
           Write as much as you want - we'll take care of the rest
@@ -232,6 +244,21 @@ const CreativeCorner = ({
         <div className="import-hint">
           <strong>Import options:</strong> Use the Import File button or simply copy & paste directly from Google Docs
         </div>
+        
+        {syntaxMode && (
+          <div className="syntax-mode-help">
+            <h4>Syntax Mode Help</h4>
+            <p>Add emotional markup to control how your text is read:</p>
+            <ul>
+              <li><code>[emotion:angry]This text sounds angry![/emotion]</code></li>
+              <li><code>[tone:sarcastic]Oh, great...[/tone]</code></li>
+              <li><code>[emphasis:strong]Very important![/emphasis]</code></li>
+              <li><code>[pace:slow]Take your time...[/pace]</code></li>
+              <li><code>[volume:whisper]Don't tell anyone.[/volume]</code></li>
+            </ul>
+            <p>These markups won't appear in normal mode but will affect how the AI reads your text.</p>
+          </div>
+        )}
       </div>
 
       <div className="button-group">
@@ -379,6 +406,9 @@ function App() {
   
   // State for TTS model selection (standard vs HD)
   const [ttsModel, setTtsModel] = useState('tts-1-hd'); // Default to HD for better quality
+  
+  // State for syntax mode
+  const [syntaxMode, setSyntaxMode] = useState(false);
 
   // Available voices
   const voices = [
@@ -930,6 +960,8 @@ function App() {
             costEstimate={costEstimate}
             ttsModel={ttsModel}
             setTtsModel={setTtsModel}
+            syntaxMode={syntaxMode}
+            setSyntaxMode={setSyntaxMode}
           />
         ) : (
           <>
