@@ -167,8 +167,8 @@ const CreativeCorner = ({
       {/* Cost Estimate Display */}
       <div className="cost-estimate">
         <div className="cost-info">
-          <span className="char-count">{costEstimate.charCount.toLocaleString()} characters</span>
-          <span className="cost-amount">{costEstimate.formattedCost}</span>
+          <span className="char-count">{costEstimate && costEstimate.charCount ? costEstimate.charCount.toLocaleString() : '0'} characters</span>
+          <span className="cost-amount">{costEstimate && costEstimate.formattedCost ? costEstimate.formattedCost : '$0.00'}</span>
         </div>
         <p className="cost-hint">Estimated OpenAI API cost for TTS conversion</p>
       </div>
@@ -865,8 +865,8 @@ function App() {
                 {/* Cost Estimate Display */}
                 <div className="cost-estimate">
                   <div className="cost-info">
-                    <span className="char-count">{costEstimate.charCount.toLocaleString()} characters</span>
-                    <span className="cost-amount">{costEstimate.formattedCost}</span>
+                    <span className="char-count">{costEstimate && costEstimate.charCount ? costEstimate.charCount.toLocaleString() : '0'} characters</span>
+                    <span className="cost-amount">{costEstimate && costEstimate.formattedCost ? costEstimate.formattedCost : '$0.00'}</span>
                   </div>
                   <p className="cost-hint">Estimated OpenAI API cost for TTS conversion</p>
                 </div>
