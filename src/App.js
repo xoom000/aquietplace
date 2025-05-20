@@ -67,7 +67,8 @@ const CreativeCorner = ({
   setShowCustomRules,
   useWilWheatonStyle,
   setUseWilWheatonStyle,
-  costEstimate
+  costEstimate,
+  apiProgress
 }) => {
   // Local state for controlling the visibility of the instructions guide
   const [showInstructionsGuide, setShowInstructionsGuide] = useState(false);
@@ -241,7 +242,27 @@ const CreativeCorner = ({
       {isProcessing && (
         <div className="processing-status">
           <div className="loading-animation"></div>
-          <p>Converting your story to audio...</p>
+          {apiProgress && apiProgress.isGenerating && apiProgress.total > 1 ? (
+            <>
+              <p>
+                Converting your story to audio... 
+                <span className="progress-text">
+                  (Section {apiProgress.current} of {apiProgress.total})
+                </span>
+              </p>
+              <div className="progress-bar-container">
+                <div 
+                  className="progress-bar-fill" 
+                  style={{ width: `${(apiProgress.current / apiProgress.total) * 100}%` }}
+                ></div>
+              </div>
+              <p className="progress-estimate">
+                Estimated time remaining: ~{Math.ceil((apiProgress.total - apiProgress.current) * 1.5)} seconds
+              </p>
+            </>
+          ) : (
+            <p>Converting your story to audio...</p>
+          )}
         </div>
       )}
 
@@ -332,6 +353,13 @@ function App() {
   
   // State for cost estimation
   const [costEstimate, setCostEstimate] = useState({ charCount: 0, cost: '0.0000', formattedCost: '$0.00' });
+  
+  // State for tracking API progress
+  const [apiProgress, setApiProgress] = useState({ 
+    current: 0, 
+    total: 0, 
+    isGenerating: false 
+  });
 
   // Available voices
   const voices = [
@@ -544,11 +572,24 @@ function App() {
       const sections = splitIntoSections(inputText);
       if (sections.length === 0) return;
       
+      // Initialize progress tracking
+      setApiProgress({
+        current: 0,
+        total: sections.length,
+        isGenerating: true
+      });
+      
       // Process each section
       const audioBlobs = [];
       
       for (let i = 0; i < sections.length; i++) {
         setCurrentSection(i);
+        
+        // Update progress
+        setApiProgress(prev => ({
+          ...prev,
+          current: i + 1
+        }));
         
         // Call API for each section
         const response = await fetch('https://api.openai.com/v1/audio/speech', {
@@ -605,6 +646,12 @@ function App() {
     } finally {
       setIsProcessingFull(false);
       setCurrentSection(null);
+      // Reset progress tracking
+      setApiProgress({
+        current: 0,
+        total: 0,
+        isGenerating: false
+      });
     }
   };
 
@@ -659,7 +706,21 @@ function App() {
     setCurrentSection(index);
     setError('');
     
+    // Set progress for single section (100% when done)
+    setApiProgress({
+      current: 0,
+      total: 1,
+      isGenerating: true
+    });
+    
     try {
+      // Update progress to show we're sending the request
+      setApiProgress({
+        current: 0.5,
+        total: 1,
+        isGenerating: true
+      });
+      
       const response = await fetch('https://api.openai.com/v1/audio/speech', {
         method: 'POST',
         headers: {
@@ -680,6 +741,13 @@ function App() {
         throw new Error(errorData.error?.message || 'Failed to convert text to speech');
       }
       
+      // Update progress to show we're processing the response
+      setApiProgress({
+        current: 1,
+        total: 1,
+        isGenerating: true
+      });
+      
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
       
@@ -694,6 +762,12 @@ function App() {
     } finally {
       setIsProcessing(false);
       setCurrentSection(null);
+      // Reset progress
+      setApiProgress({
+        current: 0,
+        total: 0,
+        isGenerating: false
+      });
     }
   };
 
@@ -818,6 +892,7 @@ function App() {
             voiceInstructions={voiceInstructions}
             setVoiceInstructions={setVoiceInstructions}
             isProcessing={isProcessingFull || combiningAudio}
+            apiProgress={apiProgress}
             apiKey={apiKey}
             previewStoryText={previewStoryText}
             voices={voices}
@@ -946,7 +1021,7 @@ function App() {
                             disabled={isProcessing}
                           >
                             {isProcessing && currentSection === index 
-                              ? 'Creating Audio...' 
+                              ? `Creating Audio... ${apiProgress.isGenerating ? Math.round((apiProgress.current / apiProgress.total) * 100) + '%' : ''}` 
                               : 'Listen to This Section'
                             }
                           </button>
