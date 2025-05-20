@@ -104,6 +104,7 @@ const CreativeCorner = ({
           <label htmlFor="voice-choice">Storyteller Voice:</label>
           <select
             id="voice-choice"
+            name="voice-choice"
             value={voiceChoice}
             onChange={(e) => setVoiceChoice(e.target.value)}
           >
@@ -128,6 +129,7 @@ const CreativeCorner = ({
           </label>
           <textarea
             id="voice-instructions"
+            name="voice-instructions"
             placeholder="How should your story be told? (e.g., warm and magical, like a fireside tale)"
             value={voiceInstructions}
             onChange={(e) => setVoiceInstructions(e.target.value)}
@@ -886,6 +888,7 @@ function App() {
                   <label htmlFor="voice-select">Storyteller Voice:</label>
                   <select
                     id="voice-select"
+                    name="voice-select"
                     value={selectedVoice}
                     onChange={(e) => setSelectedVoice(e.target.value)}
                   >
@@ -900,6 +903,7 @@ function App() {
                   <label htmlFor="instructions">Voice Mood & Style:</label>
                   <textarea
                     id="instructions"
+                    name="instructions"
                     placeholder="How should your story be told? (e.g., warm and magical, like a fireside tale)"
                     value={voiceInstructions}
                     onChange={(e) => setVoiceInstructions(e.target.value)}
