@@ -472,23 +472,26 @@ function App() {
     }
   }, []);
   
-  // Update cost estimate when text or model changes
+  // Update cost estimate when text or model changes (debounced)
   useEffect(() => {
-    // Define the function inside the effect to avoid dependency issues
-    const updateCurrentTextCost = () => {
-      if (creativeMode) {
-        const formattedText = storyHtml ? formatTextForTTS(storyHtml) : storyText;
-        const estimate = calculateCost(formattedText, ttsModel);
-        setCostEstimate(estimate);
-      } else {
-        const formattedText = htmlText ? formatTextForTTS(htmlText) : text;
-        const estimate = calculateCost(formattedText, ttsModel);
-        setCostEstimate(estimate);
-      }
-    };
+    // Debounce cost calculation to avoid excessive re-renders during typing
+    const timeoutId = setTimeout(() => {
+      const updateCurrentTextCost = () => {
+        if (creativeMode) {
+          const formattedText = storyHtml ? formatTextForTTS(storyHtml) : storyText;
+          const estimate = calculateCost(formattedText, ttsModel);
+          setCostEstimate(estimate);
+        } else {
+          const formattedText = htmlText ? formatTextForTTS(htmlText) : text;
+          const estimate = calculateCost(formattedText, ttsModel);
+          setCostEstimate(estimate);
+        }
+      };
+      
+      updateCurrentTextCost();
+    }, 500); // 500ms debounce
     
-    // Call the function to update cost
-    updateCurrentTextCost();
+    return () => clearTimeout(timeoutId);
     
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [creativeMode, storyText, storyHtml, text, htmlText, ttsModel]);
