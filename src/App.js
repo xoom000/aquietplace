@@ -216,14 +216,6 @@ const CreativeCorner = ({
         </div>
       </div>
       
-      {/* Cost Estimate Display */}
-      <div className="cost-estimate">
-        <div className="cost-info">
-          <span className="char-count">{costEstimate && costEstimate.charCount ? costEstimate.charCount.toLocaleString() : '0'} characters</span>
-          <span className="cost-amount">{costEstimate && costEstimate.formattedCost ? costEstimate.formattedCost : '$0.00'}</span>
-        </div>
-        <p className="cost-hint">Estimated OpenAI API cost for TTS conversion</p>
-      </div>
 
       <div className="story-text-container">
         <div className="story-header">
@@ -294,7 +286,11 @@ const CreativeCorner = ({
       <div className="button-group">
         <button 
           className="preview-button"
-          onClick={previewStoryText}
+          onClick={() => showCostConfirmationAndGenerate(
+            previewStoryText, 
+            storyHtml || storyText,
+            'creative'
+          )}
           disabled={isProcessing || !storyText.trim() || !apiKey}
         >
           {isProcessing ? 'Creating Audio...' : 
@@ -472,34 +468,24 @@ function App() {
     }
   }, []);
   
-  // Update cost estimate when text or model changes (debounced)
-  useEffect(() => {
-    // Debounce cost calculation to avoid excessive re-renders during typing
-    const timeoutId = setTimeout(() => {
-      const updateCurrentTextCost = () => {
-        if (creativeMode) {
-          const formattedText = storyHtml ? formatTextForTTS(storyHtml) : storyText;
-          const estimate = calculateCost(formattedText, ttsModel);
-          setCostEstimate(estimate);
-        } else {
-          const formattedText = htmlText ? formatTextForTTS(htmlText) : text;
-          const estimate = calculateCost(formattedText, ttsModel);
-          setCostEstimate(estimate);
-        }
-      };
-      
-      updateCurrentTextCost();
-    }, 1000); // 1000ms debounce to prevent cursor reset
-    
-    return () => clearTimeout(timeoutId);
-    
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [creativeMode, storyText, storyHtml, text, htmlText, ttsModel]);
 
   // Function to handle editor changes
   const handleEditorChange = (html, plainText) => {
     setHtmlText(html);
     setText(plainText);
+  };
+
+  // Function to show cost confirmation before generating audio
+  const showCostConfirmationAndGenerate = (generateFunction, textToProcess, mode) => {
+    // Calculate cost for the current text
+    const formattedText = formatTextForTTS(textToProcess);
+    const estimate = calculateCost(formattedText, ttsModel);
+    
+    const costMessage = `This will cost approximately ${estimate.formattedCost} to generate audio using OpenAI's TTS API.\n\nCharacters: ${estimate.charCount.toLocaleString()}\nModel: ${ttsModel === 'tts-1-hd' ? 'HD Quality' : 'Standard Quality'}\n\nProceed with audio generation?`;
+    
+    if (window.confirm(costMessage)) {
+      generateFunction();
+    }
   };
 
   
@@ -1050,7 +1036,11 @@ function App() {
               />
               <button 
                 className="process-button" 
-                onClick={processBookText}
+                onClick={() => showCostConfirmationAndGenerate(
+                  processBookText,
+                  htmlText || text,
+                  'book'
+                )}
                 disabled={!text.trim()}
               >
                 Prepare Audio Sections
@@ -1103,14 +1093,6 @@ function App() {
                   />
                 </div>
 
-                {/* Cost Estimate Display */}
-                <div className="cost-estimate">
-                  <div className="cost-info">
-                    <span className="char-count">{costEstimate && costEstimate.charCount ? costEstimate.charCount.toLocaleString() : '0'} characters</span>
-                    <span className="cost-amount">{costEstimate && costEstimate.formattedCost ? costEstimate.formattedCost : '$0.00'}</span>
-                  </div>
-                  <p className="cost-hint">Estimated OpenAI API cost for TTS conversion</p>
-                </div>
               </section>
             )}
 
