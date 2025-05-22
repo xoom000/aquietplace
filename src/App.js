@@ -254,7 +254,7 @@ const CreativeCorner = ({
             "Write your story with OpenAI voice instructions like (excited) This is exciting! (neutral)..." : 
             "Write or paste your story here (you can paste directly from Google Docs)..."}
           maxChars={MAX_CHARS * 5} // Allow longer stories in Creative Corner
-          hideCharCount={false}
+          hideCharCount={true}
           onCustomPaste={(e) => onPaste(e, 'creative')}
           initialValue={storyText}
           syntaxMode={syntaxMode}
@@ -1099,9 +1099,6 @@ function App() {
                       <div className="section-header">
                         <h3>Section {index + 1}</h3>
                         <div className="section-details">
-                          <span className="section-cost">
-                            ~{calculateCost(section, ttsModel) && calculateCost(section, ttsModel).formattedCost ? calculateCost(section, ttsModel).formattedCost : '$0.00'} • {section ? section.length.toLocaleString() : '0'} chars
-                          </span>
                           <button
                             className="listen-button"
                             onClick={() => convertSectionToSpeech(section, index)}
