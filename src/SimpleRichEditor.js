@@ -36,6 +36,7 @@ const SimpleRichEditor = ({
           editorRef.current.innerText = initialValue || '';
         }
         updateCounts(); // Keep immediate update for initial value
+        notifyParent(); // Notify parent of initial content
       }
       // Only focus on first load, not on every initialValue change
       if (initialValue === '' || initialValue === undefined) {
@@ -80,29 +81,35 @@ const SimpleRichEditor = ({
       } else {
         setWordCount(0); // Skip word count for large content
       }
-      
-      // Pass content to parent component
-      if (onChange) {
-        // For textarea, use plain text for both HTML and text
-        const htmlContent = useTextarea ? text : editorRef.current.innerHTML;
-        const plainText = text;
-        onChange(htmlContent, plainText);
-      }
     }
-  }, [onChange, isLargeContent, useTextarea]);
+  }, [isLargeContent, useTextarea]);
+
+  // Separate function to notify parent - called with debounce
+  const notifyParent = useCallback(() => {
+    if (editorRef.current && onChange) {
+      const text = useTextarea 
+        ? editorRef.current.value || ''
+        : editorRef.current.innerText || '';
+      const htmlContent = useTextarea ? text : editorRef.current.innerHTML;
+      onChange(htmlContent, text);
+    }
+  }, [onChange, useTextarea]);
   
   // Debounced version for performance with large texts
   const debouncedUpdateCounts = useCallback(() => {
+    // Update counts immediately for responsive UI
+    updateCounts();
+    
     // Clear any existing timeout
     if (updateTimeoutRef.current) {
       clearTimeout(updateTimeoutRef.current);
     }
     
-    // Set a new timeout
+    // Debounce parent notification to prevent cursor jumps
     updateTimeoutRef.current = setTimeout(() => {
-      updateCounts();
-    }, 300); // Increased delay for better performance
-  }, [updateCounts]);
+      notifyParent();
+    }, 300); // Debounce parent updates
+  }, [updateCounts, notifyParent]);
 
   // Format functions
   const formatText = (command, value = null) => {
@@ -144,7 +151,10 @@ const SimpleRichEditor = ({
         delete editorRef.current.dataset.selectAll;
         
         // Immediate update after large deletion
-        setTimeout(() => updateCounts(), 0);
+        setTimeout(() => {
+          updateCounts();
+          notifyParent();
+        }, 0);
         return;
       }
     }
