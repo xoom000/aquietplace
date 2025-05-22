@@ -263,7 +263,7 @@ const CreativeCorner = ({
             "Write or paste your story here (you can paste directly from Google Docs)..."}
           maxChars={MAX_CHARS * 5} // Allow longer stories in Creative Corner
           hideCharCount={false}
-          onCustomPaste={(e) => handlePaste(e, 'creative')}
+          onCustomPaste={(e) => onPaste(e, 'creative')}
           initialValue={storyText}
           syntaxMode={syntaxMode}
         />
