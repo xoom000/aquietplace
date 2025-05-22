@@ -394,11 +394,13 @@ const SimpleRichEditor = ({
       <div className="editor-footer">
         <div className="count-info">
           {!hideCharCount && (
-            <span className={charCount > maxChars ? 'exceeds-limit' : ''}>
-              Characters: {charCount}{maxChars ? ` / ${maxChars}` : ''}
-            </span>
+            <>
+              <span className={charCount > maxChars ? 'exceeds-limit' : ''}>
+                Characters: {charCount}{maxChars ? ` / ${maxChars}` : ''}
+              </span>
+              <span>Words: {wordCount > 0 ? wordCount : (isLargeContent ? '(large content)' : '0')}</span>
+            </>
           )}
-          <span>Words: {wordCount > 0 ? wordCount : (isLargeContent ? '(large content)' : '0')}</span>
           {isLargeContent && (
             <span style={{ marginLeft: '10px', color: '#ff9800' }}>
               ⚠️ Large content mode
