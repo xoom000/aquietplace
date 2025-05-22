@@ -37,7 +37,10 @@ const SimpleRichEditor = ({
         }
         updateCounts(); // Keep immediate update for initial value
       }
-      editorRef.current.focus();
+      // Only focus on first load, not on every initialValue change
+      if (initialValue === '' || initialValue === undefined) {
+        editorRef.current.focus();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValue]);
