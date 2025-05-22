@@ -1,6 +1,6 @@
 // App.js
 
-import React, { useState, useEffect, useRef, memo, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import SimpleRichEditor from './SimpleRichEditor';
 import ForestAnimations from './ForestAnimations';
@@ -68,7 +68,7 @@ const CreativeCorner = ({
   setShowCustomRules,
   useWilWheatonStyle,
   setUseWilWheatonStyle,
-  costEstimate,
+  showCostConfirmationAndGenerate,
   apiProgress,
   ttsModel,
   setTtsModel,
@@ -421,7 +421,6 @@ function App() {
   const [showCustomRules, setShowCustomRules] = useState(false);
   
   // State for cost estimation
-  const [costEstimate, setCostEstimate] = useState({ charCount: 0, cost: '0.0000', formattedCost: '$0.00' });
   
   // State for tracking API progress
   const [apiProgress, setApiProgress] = useState({ 
@@ -745,10 +744,6 @@ function App() {
     // Use formatted text from HTML for TTS
     const formattedText = storyHtml ? formatTextForTTS(storyHtml) : storyText;
     
-    // Calculate cost estimate before processing
-    const estimate = calculateCost(formattedText, ttsModel);
-    setCostEstimate(estimate);
-    
     // Process the full story at once, handling splitting behind the scenes
     await processFullAudio(formattedText);
   };
@@ -765,8 +760,6 @@ function App() {
       totalChars += section.length;
     });
     
-    const totalEstimate = calculateCost(" ".repeat(totalChars));
-    setCostEstimate(totalEstimate);
   };
 
   // Convert a single section to speech in book mode
@@ -775,10 +768,6 @@ function App() {
       setError('OpenAI API key not found. Please set REACT_APP_OPENAI_API_KEY in .env file');
       return;
     }
-    
-    // Calculate cost estimate for this section
-    const estimate = calculateCost(section, ttsModel);
-    setCostEstimate(estimate);
     
     setIsProcessing(true);
     setCurrentSection(index);
@@ -987,7 +976,7 @@ function App() {
             setShowCustomRules={setShowCustomRules}
             useWilWheatonStyle={useWilWheatonStyle}
             setUseWilWheatonStyle={setUseWilWheatonStyle}
-            costEstimate={costEstimate}
+            showCostConfirmationAndGenerate={showCostConfirmationAndGenerate}
             ttsModel={ttsModel}
             setTtsModel={setTtsModel}
             syntaxMode={syntaxMode}
