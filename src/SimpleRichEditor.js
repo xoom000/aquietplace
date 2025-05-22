@@ -108,7 +108,7 @@ const SimpleRichEditor = ({
     // Debounce parent notification to prevent cursor jumps
     updateTimeoutRef.current = setTimeout(() => {
       notifyParent();
-    }, 300); // Debounce parent updates
+    }, 500); // Longer debounce to prevent cursor jumping
   }, [updateCounts, notifyParent]);
 
   // Format functions
@@ -392,21 +392,19 @@ const SimpleRichEditor = ({
       )}
       
       <div className="editor-footer">
-        <div className="count-info">
-          {!hideCharCount && (
-            <>
-              <span className={charCount > maxChars ? 'exceeds-limit' : ''}>
-                Characters: {charCount}{maxChars ? ` / ${maxChars}` : ''}
-              </span>
-              <span>Words: {wordCount > 0 ? wordCount : (isLargeContent ? '(large content)' : '0')}</span>
-            </>
-          )}
-          {isLargeContent && (
-            <span style={{ marginLeft: '10px', color: '#ff9800' }}>
-              ⚠️ Large content mode
+        {!hideCharCount && (
+          <div className="count-info">
+            <span className={charCount > maxChars ? 'exceeds-limit' : ''}>
+              Characters: {charCount}{maxChars ? ` / ${maxChars}` : ''}
             </span>
-          )}
-        </div>
+            <span>Words: {wordCount > 0 ? wordCount : (isLargeContent ? '(large content)' : '0')}</span>
+            {isLargeContent && (
+              <span style={{ marginLeft: '10px', color: '#ff9800' }}>
+                ⚠️ Large content mode
+              </span>
+            )}
+          </div>
+        )}
         <div className="editor-actions">
           <button 
             type="button" 

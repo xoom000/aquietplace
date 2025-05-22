@@ -16,31 +16,6 @@ import mammoth from 'mammoth';
 // Maximum character limit for OpenAI's text-to-speech API (hidden from user)
 const MAX_CHARS = 4096;
 
-// OpenAI TTS API pricing per 1,000 characters (in USD)
-const PRICING = {
-  'tts-1': 0.015,      // Standard model
-  'tts-1-hd': 0.030,   // HD model
-  'gpt-4o-mini-tts': 0.015  // Using the standard pricing rate for the mini model
-};
-
-// Function to calculate estimated cost based on character count and model
-const calculateCost = (text, model = 'gpt-4o-mini-tts') => {
-  if (!text) return { charCount: 0, cost: '0.0000', formattedCost: '$0.00' };
-  
-  // Get character count
-  const charCount = text.length;
-  
-  // Calculate cost based on pricing per 1,000 characters
-  const rate = PRICING[model] || PRICING['gpt-4o-mini-tts'];
-  const cost = (charCount / 1000) * rate;
-  
-  // Return formatted cost
-  return {
-    charCount,
-    cost: cost.toFixed(4),
-    formattedCost: `$${cost.toFixed(2)}`
-  };
-};
 
 // ─── CreativeCorner Component ──────────────────────────────
 const CreativeCorner = ({
@@ -68,7 +43,7 @@ const CreativeCorner = ({
   setShowCustomRules,
   useWilWheatonStyle,
   setUseWilWheatonStyle,
-  showCostConfirmationAndGenerate,
+  generateAudio,
   apiProgress,
   ttsModel,
   setTtsModel,
@@ -286,11 +261,7 @@ const CreativeCorner = ({
       <div className="button-group">
         <button 
           className="preview-button"
-          onClick={() => showCostConfirmationAndGenerate(
-            previewStoryText, 
-            storyHtml || storyText,
-            'creative'
-          )}
+          onClick={() => generateAudio(previewStoryText)}
           disabled={isProcessing || !storyText.trim() || !apiKey}
         >
           {isProcessing ? 'Creating Audio...' : 
@@ -468,17 +439,9 @@ function App() {
   }, []);
   
 
-  // Function to show cost confirmation before generating audio
-  const showCostConfirmationAndGenerate = (generateFunction, textToProcess, mode) => {
-    // Calculate cost for the current text
-    const formattedText = formatTextForTTS(textToProcess);
-    const estimate = calculateCost(formattedText, ttsModel);
-    
-    const costMessage = `This will cost approximately ${estimate.formattedCost} to generate audio using OpenAI's TTS API.\n\nCharacters: ${estimate.charCount.toLocaleString()}\nModel: ${ttsModel === 'tts-1-hd' ? 'HD Quality' : 'Standard Quality'}\n\nProceed with audio generation?`;
-    
-    if (window.confirm(costMessage)) {
-      generateFunction();
-    }
+  // Function to generate audio directly without cost confirmation
+  const generateAudio = (generateFunction) => {
+    generateFunction();
   };
 
   // Function to handle editor changes
@@ -753,13 +716,6 @@ function App() {
     const sections = splitIntoSections(text, htmlText);
     setAudioSections(sections);
     setError('');
-    
-    // Calculate total cost for all sections
-    let totalChars = 0;
-    sections.forEach(section => {
-      totalChars += section.length;
-    });
-    
   };
 
   // Convert a single section to speech in book mode
@@ -976,7 +932,7 @@ function App() {
             setShowCustomRules={setShowCustomRules}
             useWilWheatonStyle={useWilWheatonStyle}
             setUseWilWheatonStyle={setUseWilWheatonStyle}
-            showCostConfirmationAndGenerate={showCostConfirmationAndGenerate}
+            generateAudio={generateAudio}
             ttsModel={ttsModel}
             setTtsModel={setTtsModel}
             syntaxMode={syntaxMode}
@@ -1025,11 +981,7 @@ function App() {
               />
               <button 
                 className="process-button" 
-                onClick={() => showCostConfirmationAndGenerate(
-                  processBookText,
-                  htmlText || text,
-                  'book'
-                )}
+                onClick={() => generateAudio(processBookText)}
                 disabled={!text.trim()}
               >
                 Prepare Audio Sections
