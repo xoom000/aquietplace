@@ -469,12 +469,6 @@ function App() {
   }, []);
   
 
-  // Function to handle editor changes
-  const handleEditorChange = (html, plainText) => {
-    setHtmlText(html);
-    setText(plainText);
-  };
-
   // Function to show cost confirmation before generating audio
   const showCostConfirmationAndGenerate = (generateFunction, textToProcess, mode) => {
     // Calculate cost for the current text
@@ -486,6 +480,12 @@ function App() {
     if (window.confirm(costMessage)) {
       generateFunction();
     }
+  };
+
+  // Function to handle editor changes
+  const handleEditorChange = (html, plainText) => {
+    setHtmlText(html);
+    setText(plainText);
   };
 
   
