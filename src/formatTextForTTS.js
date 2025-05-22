@@ -105,6 +105,14 @@ export const enhanceVoiceInstructions = (baseInstructions, instructionsJson, wit
 - Connect related emotional content even when separated by description`;
   }
   
+  // Always add emotional context guidance to ensure the AI doesn't sound monotone
+  enhancedInstructions += `\n\nEssential emotional context:
+- Read with natural emotional inflection based on the content
+- Adjust tone to match the mood and atmosphere of the text
+- Use appropriate pacing and emphasis for dramatic moments
+- Maintain engagement and expressiveness throughout
+- If the text contains emotions, convey them through your voice naturally`;
+  
   // Add specific punctuation and formatting instructions
   enhancedInstructions += `\n\nAdditional reading guidance:`;
   

@@ -166,15 +166,7 @@ const CreativeCorner = ({
             name="voice-instructions"
             placeholder="How should your story be told? (e.g., warm and magical, like a fireside tale)"
             value={voiceInstructions}
-            onChange={(e) => {
-              // Save cursor position
-              const cursorPos = e.target.selectionStart;
-              setVoiceInstructions(e.target.value);
-              // Restore cursor position after state update
-              setTimeout(() => {
-                e.target.selectionStart = e.target.selectionEnd = cursorPos;
-              }, 0);
-            }}
+            onChange={(e) => setVoiceInstructions(e.target.value)}
             rows={3}
             className="voice-instructions-textarea"
           />
@@ -398,7 +390,7 @@ function App() {
   const [htmlText, setHtmlText] = useState(''); // For storing HTML content from editor
   const [audioSections, setAudioSections] = useState([]); // Renamed from chunks
   const [selectedVoice, setSelectedVoice] = useState('alloy');
-  const [voiceInstructions, setVoiceInstructions] = useState('Read in a natural, engaging tone');
+  const [voiceInstructions, setVoiceInstructions] = useState('Read in the authentic, engaging style of Wil Wheaton. Use a conversational tone with natural inflection that adjusts to emotional context. Be attentive to emotional transitions and deliver dialogue with distinct character voices without overacting. Emphasize emotional honesty over dramatic performance, like sharing a personal story with friends.');
   const [isProcessing, setIsProcessing] = useState(false);
   const [currentSection, setCurrentSection] = useState(null); // Renamed from currentChunk
   const [error, setError] = useState('');
@@ -450,7 +442,7 @@ function App() {
   
   // State for narrator class
   const [showNarratorSelector, setShowNarratorSelector] = useState(false);
-  const [narratorClass, setNarratorClass] = useState('Default');
+  const [narratorClass, setNarratorClass] = useState('Wil Wheaton');
 
   // Available voices
   const voices = [
@@ -1100,15 +1092,7 @@ function App() {
                     name="instructions"
                     placeholder="How should your story be told? (e.g., warm and magical, like a fireside tale)"
                     value={voiceInstructions}
-                    onChange={(e) => {
-                      // Save cursor position
-                      const cursorPos = e.target.selectionStart;
-                      setVoiceInstructions(e.target.value);
-                      // Restore cursor position after state update
-                      setTimeout(() => {
-                        e.target.selectionStart = e.target.selectionEnd = cursorPos;
-                      }, 0);
-                    }}
+                    onChange={(e) => setVoiceInstructions(e.target.value)}
                     rows={3}
                     className="voice-instructions-textarea"
                   />
