@@ -1,6 +1,6 @@
 // App.js
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, memo, useMemo } from 'react';
 import './App.css';
 import SimpleRichEditor from './SimpleRichEditor';
 import ForestAnimations from './ForestAnimations';
@@ -253,20 +253,22 @@ const CreativeCorner = ({
             </button>
           </div>
         </div>
-        <SimpleRichEditor 
-          onChange={(html, plainText) => {
-            setStoryText(plainText);
-            setStoryHtml(html);
-          }}
-          placeholder={syntaxMode ? 
-            "Write your story with OpenAI voice instructions like (excited) This is exciting! (neutral)..." : 
-            "Write or paste your story here (you can paste directly from Google Docs)..."}
-          maxChars={MAX_CHARS * 5} // Allow longer stories in Creative Corner
-          hideCharCount={false}
-          onCustomPaste={(e) => onPaste(e, 'creative')}
-          initialValue={storyText}
-          syntaxMode={syntaxMode}
-        />
+{useMemo(() => (
+          <SimpleRichEditor 
+            onChange={(html, plainText) => {
+              setStoryText(plainText);
+              setStoryHtml(html);
+            }}
+            placeholder={syntaxMode ? 
+              "Write your story with OpenAI voice instructions like (excited) This is exciting! (neutral)..." : 
+              "Write or paste your story here (you can paste directly from Google Docs)..."}
+            maxChars={MAX_CHARS * 5} // Allow longer stories in Creative Corner
+            hideCharCount={false}
+            onCustomPaste={(e) => onPaste(e, 'creative')}
+            initialValue={storyText}
+            syntaxMode={syntaxMode}
+          />
+        ), [syntaxMode, storyText])}
         <div className="char-hint">
           Write as much as you want - we'll take care of the rest
         </div>
@@ -1038,14 +1040,16 @@ function App() {
                   </button>
                 </div>
               </div>
-              <SimpleRichEditor 
-                onChange={handleEditorChange}
-                placeholder="Paste or type your book text here (you can paste directly from Google Docs)..."
-                maxChars={MAX_CHARS}
-                hideCharCount={true}
-                onCustomPaste={(e) => handlePaste(e, 'book')}
-                initialValue={text}
-              />
+{useMemo(() => (
+                <SimpleRichEditor 
+                  onChange={handleEditorChange}
+                  placeholder="Paste or type your book text here (you can paste directly from Google Docs)..."
+                  maxChars={MAX_CHARS}
+                  hideCharCount={true}
+                  onCustomPaste={(e) => handlePaste(e, 'book')}
+                  initialValue={text}
+                />
+              ), [text])}
               <button 
                 className="process-button" 
                 onClick={processBookText}
