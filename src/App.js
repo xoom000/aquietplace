@@ -489,37 +489,6 @@ function App() {
     setText(plainText);
   };
 
-  // Stable onChange handlers for creative mode
-  const handleCreativeChange = useMemo(() => (html, plainText) => {
-    setStoryText(plainText);
-    setStoryHtml(html);
-  }, []);
-
-  // Memoized editors to prevent re-renders from cost updates
-  const creativeEditor = useMemo(() => (
-    <SimpleRichEditor 
-      onChange={handleCreativeChange}
-      placeholder={syntaxMode ? 
-        "Write your story with OpenAI voice instructions like (excited) This is exciting! (neutral)..." : 
-        "Write or paste your story here (you can paste directly from Google Docs)..."}
-      maxChars={MAX_CHARS * 5} // Allow longer stories in Creative Corner
-      hideCharCount={false}
-      onCustomPaste={(e) => onPaste(e, 'creative')}
-      initialValue={storyText}
-      syntaxMode={syntaxMode}
-    />
-  ), [syntaxMode, storyText, handleCreativeChange]);
-
-  const bookEditor = useMemo(() => (
-    <SimpleRichEditor 
-      onChange={handleEditorChange}
-      placeholder="Paste or type your book text here (you can paste directly from Google Docs)..."
-      maxChars={MAX_CHARS}
-      hideCharCount={true}
-      onCustomPaste={(e) => handlePaste(e, 'book')}
-      initialValue={text}
-    />
-  ), [text, handleEditorChange]);
   
   // Function to handle local file import
   const handleFileImport = async (event, targetMode) => {
@@ -880,6 +849,38 @@ function App() {
       });
     }
   };
+
+  // Stable onChange handlers for creative mode
+  const handleCreativeChange = useMemo(() => (html, plainText) => {
+    setStoryText(plainText);
+    setStoryHtml(html);
+  }, []);
+
+  // Memoized editors to prevent re-renders from cost updates
+  const creativeEditor = useMemo(() => (
+    <SimpleRichEditor 
+      onChange={handleCreativeChange}
+      placeholder={syntaxMode ? 
+        "Write your story with OpenAI voice instructions like (excited) This is exciting! (neutral)..." : 
+        "Write or paste your story here (you can paste directly from Google Docs)..."}
+      maxChars={MAX_CHARS * 5} // Allow longer stories in Creative Corner
+      hideCharCount={false}
+      onCustomPaste={(e) => handlePaste(e, 'creative')}
+      initialValue={storyText}
+      syntaxMode={syntaxMode}
+    />
+  ), [syntaxMode, storyText, handleCreativeChange]);
+
+  const bookEditor = useMemo(() => (
+    <SimpleRichEditor 
+      onChange={handleEditorChange}
+      placeholder="Paste or type your book text here (you can paste directly from Google Docs)..."
+      maxChars={MAX_CHARS}
+      hideCharCount={true}
+      onCustomPaste={(e) => handlePaste(e, 'book')}
+      initialValue={text}
+    />
+  ), [text, handleEditorChange]);
 
   return (
     <div className="App">
