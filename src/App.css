@@ -491,42 +491,7 @@ h2::after {
   text-align: center;
 }
 
-/* Cost Estimation Display - REDESIGNED */
-.cost-estimate {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0 0 var(--element-spacing);
-  padding: 12px;
-  background: rgba(126, 176, 105, 0.15);
-  border-radius: var(--border-radius-md);
-  border: 1px solid rgba(126, 176, 105, 0.3);
-}
 
-.cost-info {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 5px;
-}
-
-.char-count {
-  color: var(--text-color);
-  font-size: 0.9rem;
-}
-
-.cost-amount {
-  font-weight: bold;
-  color: var(--success-color);
-  font-size: 1.1rem;
-}
-
-.cost-hint {
-  font-size: 0.8rem;
-  color: var(--text-color);
-  opacity: 0.8;
-  text-align: center;
-}
 
 /* Button Styles - REDESIGNED */
 .button-group {
@@ -991,11 +956,6 @@ footer {
   gap: 15px;
 }
 
-.section-cost {
-  font-size: 0.85rem;
-  color: var(--accent-color);
-  white-space: nowrap;
-}
 
 .listen-button {
   background-color: var(--primary-color);
