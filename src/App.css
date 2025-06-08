@@ -553,22 +553,22 @@ h2::after {
   line-height: 1.7;
 }
 
-.audio-player {
-  width: 100%;
-  margin-bottom: 30px;
-  background-color: rgba(44, 41, 21, 0.7);
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
-}
-
-audio::-webkit-media-controls-panel {
-  background-color: rgba(44, 41, 21, 0.9);
-}
-
-audio::-webkit-media-controls-current-time-display,
-audio::-webkit-media-controls-time-remaining-display {
-  color: var(--text-color);
-}
+PLACEHOLDER
+PLACEHOLDER
+PLACEHOLDER
+PLACEHOLDER
+PLACEHOLDER
+PLACEHOLDER
+PLACEHOLDER
+PLACEHOLDER
+PLACEHOLDER
+PLACEHOLDER
+PLACEHOLDER
+PLACEHOLDER
+PLACEHOLDER
+PLACEHOLDER
+PLACEHOLDER
+PLACEHOLDER
 
 .sections-list {
   display: flex;
